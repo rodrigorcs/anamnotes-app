@@ -10,7 +10,13 @@ export const Sidebar: FC = () => {
       <div className="tw-flex tw-flex-col tw-max-h-full">
         <div className="tw-flex tw-flex-col tw-px-6">
           <Input placeholder="Pesquisar..." IconLeft={<SearchIcon />} />
-          <Button text="Nova anamnese" IconLeft={<PlusIcon />} rounded className="tw-mt-6" />
+          <Button
+            text="Nova anamnese"
+            IconLeft={<PlusIcon />}
+            rounded
+            size="small"
+            className="tw-mt-6"
+          />
         </div>
         <ClientsList clients={new Array(20).fill('Rodrigo Costa')} className="tw-mt-6 tw-ml-6" />
       </div>

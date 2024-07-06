@@ -1,24 +1,12 @@
 import { useEffect, useState } from 'react'
 import { TSection } from './models/contracts/sections'
-import {
-  Search as SearchIcon,
-  Plus as PlusIcon,
-  Minus as MinusIcon,
-  Copy as CopyIcon,
-  IconoirProvider,
-} from 'iconoir-react'
 import '../styles.css'
-import { theme } from './theme'
-import { cn } from './utils/className'
-import { Avatar } from './components/common/Avatar'
-import { Button } from './components/common/Button'
 import { Sidebar } from './components/sidebar'
 import { Topbar } from './components/topbar'
-import { SummarizationSection } from './components/summarization/SummarizationSection'
-import { Summarization } from './components/summarization'
 import { MainContainer } from './components/containers/MainContainer'
 import { ContentContainer } from './components/containers/ContentContainer'
 import { RootContainer } from './components/containers/RootContainer'
+import { Conversation } from './components/conversation'
 
 export enum ERecordingState {
   IDLE = 'idle',
@@ -57,7 +45,8 @@ function App(props: unknown) {
       <MainContainer>
         <Topbar />
         <ContentContainer>
-          <Summarization />
+          <Conversation />
+          {/* <Summarization /> */}
         </ContentContainer>
       </MainContainer>
     </RootContainer>

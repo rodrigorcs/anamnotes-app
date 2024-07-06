@@ -5,6 +5,7 @@ import { cn } from '../../utils/className'
 import { ClassNameValue } from 'tailwind-merge'
 
 type TButtonVariant = 'primary' | 'secondary' | 'tertiary'
+type TButtonSize = 'small' | 'medium'
 
 interface IStyles {
   buttonClassNames: ClassNameValue
@@ -49,6 +50,7 @@ interface IProps {
   text?: string
   IconLeft?: ReactNode
   IconRight?: ReactNode
+  size?: TButtonSize
   variant?: TButtonVariant
   rounded?: boolean
   className?: ClassNameValue
@@ -59,6 +61,7 @@ export const Button: FC<IProps> = ({
   IconLeft,
   IconRight,
   variant = 'primary',
+  size = 'medium',
   rounded,
   className,
 }) => {
@@ -67,9 +70,10 @@ export const Button: FC<IProps> = ({
   return (
     <button
       className={cn(
-        'tw-flex tw-group tw-items-center tw-h-10 tw-justify-center tw-transition-colors',
+        'tw-flex tw-group tw-items-center tw-justify-center tw-transition-colors',
         variantStyles.buttonClassNames,
         rounded ? 'tw-rounded-full' : 'tw-rounded-lg',
+        size === 'small' ? 'tw-h-10' : 'tw-h-11',
         className,
       )}
     >
@@ -85,7 +89,7 @@ export const Button: FC<IProps> = ({
         {text && (
           <p
             className={cn(
-              'tw-font-medium tw-text-sm',
+              'tw-text-sm',
               IconLeft && 'tw-ml-2',
               IconRight && 'tw-mr-2',
               variantStyles.textClassNames,
