@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react'
 import { TSection } from './models/contracts/sections'
-import { Search as SearchIcon, Plus as AddIcon } from 'iconoir-react'
+import {
+  Search as SearchIcon,
+  Plus as PlusIcon,
+  Minus as MinusIcon,
+  Copy as CopyIcon,
+  IconoirProvider,
+} from 'iconoir-react'
 import '../styles.css'
 import { theme } from './theme'
 import { cn } from './utils/className'
 import { Avatar } from './components/common/Avatar'
+import { Button } from './components/common/Button'
 
 export enum ERecordingState {
   IDLE = 'idle',
@@ -50,17 +57,7 @@ function App(props: unknown) {
             />
             <input className="tw-flex-1 tw-ml-2 tw-outline-none" placeholder="Pesquisar..." />
           </div>
-          <button className="tw-flex tw-items-center tw-mt-6 tw-bg-brand-500 tw-h-10 tw-rounded-full tw-justify-center">
-            <AddIcon
-              color={theme.colors['neutrals-white']}
-              strokeWidth={2}
-              width="1.5em"
-              height="1.5em"
-            />
-            <p className="tw-text-neutrals-white tw-font-medium tw-text-sm tw-mx-2">
-              Nova anamnese
-            </p>
-          </button>
+          <Button text="Nova anamnese" IconLeft={<PlusIcon />} rounded className="tw-mt-6" />
           <div className="tw-mt-6">
             <h3 className="tw-text-neutrals-800 tw-font-medium tw-text-sm">Hoje</h3>
             <div className="tw-mt-4 tw-items-center">
@@ -98,7 +95,61 @@ function App(props: unknown) {
             </div>
           </div>
         </div>
-        <div className="flex-1 tw-bg-background-white"></div>
+        <div className="tw-flex tw-flex-1 tw-justify-center tw-bg-background-white">
+          <div className="tw-flex tw-flex-col tw-w-[42rem] tw-py-10 tw-px-4">
+            <h1 className="tw-text-neutrals-800 tw-font-bold tw-text-3xl">Resumo da anamnese</h1>
+            <div className="tw-mt-8">
+              {new Array(4).fill(null).map((_item, index) => {
+                const isFirstItem = index === 0
+                const isExpanded = index !== 2
+                return (
+                  <div className={cn('flex-1 tw-flex', !isFirstItem && 'tw-mt-8')}>
+                    <div className="tw-mt-1">
+                      <IconoirProvider
+                        iconProps={{
+                          color: theme.colors['neutrals-500'],
+                          strokeWidth: 2,
+                          width: '1.5em',
+                          height: '1.5em',
+                        }}
+                      >
+                        {isExpanded ? <MinusIcon /> : <PlusIcon />}
+                      </IconoirProvider>
+                    </div>
+                    <div className="tw-ml-3 tw-flex-1 tw-flex tw-flex-col">
+                      <div className="tw-flex tw-flex-row tw-items-center">
+                        <h2 className="tw-text-neutrals-700 tw-font-semibold tw-text-xl tw-leading-8">
+                          Queixa Principal
+                        </h2>
+                        {isExpanded && (
+                          <CopyIcon
+                            color={theme.colors['neutrals-300']}
+                            strokeWidth={1.5}
+                            width="1.25em"
+                            height="1.25em"
+                            className="tw-ml-2 tw-cursor-pointer tw-transition-colors hover:tw-text-neutrals-600"
+                          />
+                        )}
+                      </div>
+                      {isExpanded && (
+                        <p className="tw-text-neutrals-500 tw-mt-2">
+                          João, 34 anos, sexo masculino, caucasiano, jornalista, apresentou-se à
+                          clínica com a queixa principal de insônia. O paciente relata que tem
+                          dificuldade em iniciar e manter o sono. Relata ainda sonolência durante o
+                          dia no turno em que trabalha.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="tw-flex tw-mt-8">
+              <Button text="Copiar tudo" IconRight={<CopyIcon />} variant="secondary" rounded />
+              <Button text="Copiar seções expandidas" variant="tertiary" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
