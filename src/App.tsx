@@ -4,6 +4,7 @@ import { Search as SearchIcon, Plus as AddIcon } from 'iconoir-react'
 import '../styles.css'
 import { theme } from './theme'
 import { cn } from './utils/className'
+import { Avatar } from './components/common/Avatar'
 
 export enum ERecordingState {
   IDLE = 'idle',
@@ -39,7 +40,7 @@ function App(props: unknown) {
   return (
     <div id="anamnotes-app-container" className="tw-flex">
       <div className="tw-flex tw-flex-col tw-w-72 tw-bg-background-100 tw-px-4 tw-py-6">
-        <div className="tw-flex tw-flex-col tw-p-2">
+        <div className="tw-flex tw-flex-col tw-px-2">
           <div className="tw-flex tw-bg-neutrals-white tw-border tw-border-neutrals-200 tw-rounded-lg tw-h-10 tw-items-center tw-px-2 focus-within:tw-border-2 focus-within:tw-border-brand-500">
             <SearchIcon
               color={theme.colors['neutrals-400']}
@@ -64,10 +65,6 @@ function App(props: unknown) {
             <h3 className="tw-text-neutrals-800 tw-font-medium tw-text-sm">Hoje</h3>
             <div className="tw-mt-4 tw-items-center">
               {new Array(10).fill('Rodrigo Costa').map((fullName, index) => {
-                const initials = fullName
-                  .split(' ')
-                  .map((name: string) => name[0])
-                  .join('')
                 const isFirstItem = index === 0
                 const isSelected = index === 3
                 return (
@@ -78,11 +75,7 @@ function App(props: unknown) {
                       isSelected && 'tw-bg-background-200 tw-font-medium',
                     )}
                   >
-                    <div className="tw-size-7 tw-rounded-full tw-bg-[#E6F3FF] tw-items-center tw-justify-center tw-text-center">
-                      <span className="tw-text-xs tw-font-medium tw-text-brand-500">
-                        {initials}
-                      </span>
-                    </div>
+                    <Avatar fullName={fullName} />
                     <p className="tw-ml-2 tw-text-neutrals-700 tw-text-sm">{fullName}</p>
                   </div>
                 )
@@ -91,8 +84,20 @@ function App(props: unknown) {
           </div>
         </div>
       </div>
-      <div className="tw-flex-col tw-flex-1 tw-bg-background-white">
-        <div className="tw-h-28 tw-bg-background-white tw-border-b tw-border-neutrals-200"></div>
+      <div className="tw-flex tw-flex-col tw-flex-1 tw-bg-background-white">
+        <div className="flex-1 tw-flex tw-h-28 tw-px-10 tw-py-6 tw-bg-background-white tw-border-b tw-border-neutrals-200">
+          <Avatar fullName="Rodrigo Costa" className="tw-size-8" />
+          <div className="tw-ml-3 tw-flex-1 tw-flex tw-flex-col tw-justify-between">
+            <h2 className="tw-text-neutrals-800 tw-font-medium tw-text-xl tw-leading-8">
+              Rodrigo Costa
+            </h2>
+            <div className="tw-flex tw-flex-row tw-items-center">
+              <p className="tw-text-neutrals-600">Ontem às 16:30</p>
+              <span className="tw-mx-2 tw-size-1 tw-rounded-full tw-bg-neutrals-400 tw-block" />
+              <p className="tw-text-neutrals-400">+3 anamneses</p>
+            </div>
+          </div>
+        </div>
         <div className="flex-1 tw-bg-background-white"></div>
       </div>
     </div>

@@ -3,6 +3,9 @@ export default {
   prefix: 'tw-',
   content: ['./src/**/*.{jsx,tsx,js,ts}'],
   theme: {
+    fontFamily: {
+      sans: ['Inter', '"Inter"', 'sans-serif'],
+    },
     colors: {
       'brand-900': '#03133A',
       'brand-700': '#052269',
