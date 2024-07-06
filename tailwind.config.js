@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   prefix: 'tw-',
-  content: ['./src/**/*.{jsx,tsx,js,ts}'],
+  content: ['./src/**/*.{ts,tsx}'],
   theme: {
     fontFamily: {
       sans: ['Inter', '"Inter"', 'sans-serif'],

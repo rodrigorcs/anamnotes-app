@@ -54,6 +54,7 @@ interface IProps {
   variant?: TButtonVariant
   rounded?: boolean
   className?: ClassNameValue
+  textClassName?: ClassNameValue
 }
 
 export const Button: FC<IProps> = ({
@@ -64,6 +65,7 @@ export const Button: FC<IProps> = ({
   size = 'medium',
   rounded,
   className,
+  textClassName,
 }) => {
   const variantStyles = getStylesByVariant(variant)
 
@@ -93,6 +95,7 @@ export const Button: FC<IProps> = ({
               IconLeft && 'tw-ml-2',
               IconRight && 'tw-mr-2',
               variantStyles.textClassNames,
+              textClassName,
             )}
           >
             {text}

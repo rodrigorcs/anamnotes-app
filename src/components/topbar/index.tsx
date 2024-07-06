@@ -3,7 +3,7 @@ import { Avatar } from '../common/Avatar'
 
 export const Topbar: FC = () => {
   return (
-    <div className="flex-1 tw-flex tw-h-28 tw-px-10 tw-py-6 tw-bg-background-white tw-border-b tw-border-neutrals-200">
+    <div className="flex-1 tw-flex tw-h-28 tw-px-9 tw-py-6 tw-bg-background-white tw-border-b tw-border-neutrals-200">
       <Avatar fullName="Rodrigo Costa" className="tw-size-8" />
       <div className="tw-ml-3 tw-flex-1 tw-flex tw-flex-col tw-justify-between">
         <h2 className="tw-text-neutrals-800 tw-font-medium tw-text-xl tw-leading-8">
