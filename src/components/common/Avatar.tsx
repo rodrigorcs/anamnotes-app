@@ -8,10 +8,11 @@ interface IProps {
 }
 
 export const Avatar: FC<IProps> = ({ fullName, className }) => {
-  const initials = fullName
-    .split(' ')
-    .map((name: string) => name[0])
-    .join('')
+  const names = fullName.split(' ')
+  const lastName = names.pop()
+
+  const firstChar: string = fullName[0]
+  const lastChar: string = lastName?.[0] ?? ''
 
   return (
     <div
@@ -20,7 +21,7 @@ export const Avatar: FC<IProps> = ({ fullName, className }) => {
         className,
       )}
     >
-      <span className="tw-text-xs tw-font-medium tw-text-brand-500">{initials}</span>
+      <span className="tw-text-xs tw-font-medium tw-text-brand-500">{`${firstChar}${lastChar}`}</span>
     </div>
   )
 }

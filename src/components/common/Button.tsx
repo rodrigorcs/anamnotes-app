@@ -16,14 +16,14 @@ const getStylesByVariant = (variant: TButtonVariant): IStyles => {
   const stylesByVariant: Record<TButtonVariant, IStyles> = Object.freeze({
     primary: {
       buttonClassNames:
-        'tw-bg-brand-500 hover:tw-bg-brand-700 tw-shadow-[0_4px_8px_0px_rgba(0,0,0,0.15)]',
+        'tw-px-6 tw-bg-brand-500 hover:tw-bg-brand-700 tw-shadow-[0_4px_8px_0px_rgba(0,0,0,0.15)]',
       textClassNames: 'tw-text-neutrals-white',
       iconProps: {
         color: theme.colors['neutrals-white'],
       },
     },
     secondary: {
-      buttonClassNames: 'tw-bg-background-200',
+      buttonClassNames: 'tw-px-6 tw-bg-background-200',
       textClassNames: 'tw-text-brand-500 group-hover:tw-text-brand-700',
       iconProps: {
         color: theme.colors['brand-500'],
@@ -33,7 +33,7 @@ const getStylesByVariant = (variant: TButtonVariant): IStyles => {
       },
     },
     tertiary: {
-      buttonClassNames: '',
+      buttonClassNames: 'tw-px-4',
       textClassNames: 'tw-text-brand-500 group-hover:tw-text-brand-700',
       iconProps: {
         color: theme.colors['brand-500'],
@@ -67,7 +67,7 @@ export const Button: FC<IProps> = ({
   return (
     <button
       className={cn(
-        'tw-flex tw-group tw-items-center tw-h-10 tw-justify-center tw-px-6 tw-transition-colors',
+        'tw-flex tw-group tw-items-center tw-h-10 tw-justify-center tw-transition-colors',
         variantStyles.buttonClassNames,
         rounded ? 'tw-rounded-full' : 'tw-rounded-lg',
         className,
