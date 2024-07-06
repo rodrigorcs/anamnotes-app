@@ -30,6 +30,8 @@ export const theme = {
     'neutrals-white': '#FFFFFF',
     'neutrals-black': '#000000',
 
-    'common-background': '#FFFFFF',
+    'background-200': '#EDEFFD',
+    'background-100': '#F9FAFE',
+    'background-white': '#FFFFFF',
   },
 } as const
