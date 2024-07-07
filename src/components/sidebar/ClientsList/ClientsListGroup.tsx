@@ -1,7 +1,6 @@
 import { FC } from 'react'
 import { ClassNameValue } from 'tailwind-merge'
 import { cn } from '../../../utils/className'
-import { Avatar } from '../../common/Avatar'
 import { ClientsListItem } from './ClientsListItem'
 import { IClient } from '../../../models/contracts/Conversations'
 
@@ -18,7 +17,7 @@ export const ClientsListGroup: FC<IProps> = ({ title, clients, isFirstItem, clas
       <h3 className="tw-text-neutrals-800 tw-font-medium tw-text-sm">{title}</h3>
       <div className="tw-mt-4 tw-items-center">
         {clients.map((client, index) => {
-          return <ClientsListItem client={client} isFirstItem={index === 0} />
+          return <ClientsListItem key={client.id} client={client} isFirstItem={index === 0} />
         })}
       </div>
     </div>

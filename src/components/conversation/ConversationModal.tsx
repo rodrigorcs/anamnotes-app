@@ -3,19 +3,21 @@ import { Input } from '../common/Input'
 import { Button } from '../common/Button'
 import {
   Check as CheckIcon,
-  MicrophoneMute as MuteIcon,
+  MicrophoneMuteSolid as MuteIcon,
   IconoirProvider,
   Microphone as MicIcon,
 } from 'iconoir-react'
 import { cn } from '../../utils/className'
 import { theme } from '../../theme'
 import axios from 'axios'
-import { ERecordingState } from '../../App'
 import { TSummarizationWebsocketMessage, EWebsocketMessageTypes } from '../../models/apis/websocket'
 import { Spinner } from '../common/Spinner'
 import { useConversationStore } from '../../stores/conversations'
 import { IConversationWithSummarizations } from '../../models/contracts/Conversations'
-import { useRecordingStore } from '../../stores/recording'
+import { ERecordingState, useRecordingStore } from '../../stores/recording'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+dayjs.extend(duration)
 
 interface IStartConversationContentProps {
   startRecording: (clientName: string) => void
@@ -55,6 +57,10 @@ const getContentByRecordingState = (recordingState: ERecordingState) => {
       Icon: <CheckIcon />,
       title: 'Ouvindo o paciente',
     },
+    [ERecordingState.PAUSED]: {
+      Icon: <CheckIcon />,
+      title: 'Mudo',
+    },
     [ERecordingState.WAITING_RESPONSE]: {
       Icon: (
         <Spinner
@@ -76,14 +82,31 @@ const getContentByRecordingState = (recordingState: ERecordingState) => {
   return fabContentMapping[recordingState as ERecordingState]
 }
 
+const formatElapsedTime = (seconds: number): string => {
+  const duration = dayjs.duration(seconds, 'seconds')
+  const minutes = Math.floor(duration.asMinutes())
+  const remainingSeconds = duration.seconds()
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+}
+
 interface IOngoingConversationContentProps {
+  pauseRecording: () => void
+  resumeRecording: () => void
   stopRecording: () => void
 }
 
-const OngoingConversationContent: FC<IOngoingConversationContentProps> = ({ stopRecording }) => {
+const OngoingConversationContent: FC<IOngoingConversationContentProps> = ({
+  pauseRecording,
+  resumeRecording,
+  stopRecording,
+}) => {
   const clientName = useRecordingStore((state) => state.clientName)
   const recordingState = useRecordingStore((state) => state.recordingState)
+  const elapsedTime = useRecordingStore((state) => state.elapsedTime)
+  const clearRecordingState = useRecordingStore((state) => state.clearRecordingState)
 
+  const formattedElapsedTime = formatElapsedTime(elapsedTime)
+  const isPaused = recordingState === ERecordingState.PAUSED
   const content = getContentByRecordingState(recordingState)
 
   return (
@@ -92,23 +115,27 @@ const OngoingConversationContent: FC<IOngoingConversationContentProps> = ({ stop
         <div className="tw-flex tw-flex-1 tw-p-6">
           <div className="tw-flex tw-flex-col tw-flex-1 tw-justify-between">
             <h3 className="tw-font-semibold tw-text-xl">{clientName}</h3>
-            <h3 className="tw-text-neutrals-600">{`${content.title} - 1:23`}</h3>
+            <h3 className="tw-text-neutrals-600">{`${content.title} - ${formattedElapsedTime}`}</h3>
           </div>
           <div className="tw-flex">
             <button
               className={cn(
                 'tw-bg-neutrals-100 hover:tw-bg-neutrals-200 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-size-14 tw-transition-colors',
+                isPaused && 'hover:tw-bg-feedback-negative-100',
               )}
+              onClick={isPaused ? resumeRecording : pauseRecording}
             >
               <IconoirProvider
                 iconProps={{
-                  color: theme.colors['neutrals-600'],
+                  color: isPaused
+                    ? theme.colors['feedback-negative-300']
+                    : theme.colors['neutrals-600'],
                   strokeWidth: 2,
                   width: '1.5em',
                   height: '1.5em',
                 }}
               >
-                <MuteIcon />
+                {isPaused ? <MuteIcon /> : <MicIcon />}
               </IconoirProvider>
             </button>
             <button
@@ -137,6 +164,7 @@ const OngoingConversationContent: FC<IOngoingConversationContentProps> = ({ stop
             text="Cancelar"
             className="tw-px-0 tw-mr-1"
             textClassName="tw-text-feedback-negative-300 group-hover:tw-text-feedback-negative-500"
+            onClick={clearRecordingState}
           />
         </div>
       </div>
@@ -156,7 +184,6 @@ export const ConversationModal: FC = () => {
   const selectConversation = useConversationStore((state) => state.selectConversation)
   const recordingState = useRecordingStore((state) => state.recordingState)
   const setRecordingState = useRecordingStore((state) => state.setRecordingState)
-  const clientName = useRecordingStore((state) => state.clientName)
 
   useEffect(() => {
     recordingStateRef.current = recordingState
@@ -171,9 +198,18 @@ export const ConversationModal: FC = () => {
 
     recorder.ondataavailable = (event: BlobEvent) => {
       const blob = new Blob([event.data], { type: 'audio/webm' })
-      recordingStateRef.current === ERecordingState.RECORDING
+
+      ;[ERecordingState.RECORDING, ERecordingState.PAUSED].includes(recordingStateRef.current)
         ? chunkCallback(blob)
         : stopCallback(blob)
+    }
+
+    recorder.onpause = () => {
+      setRecordingState(ERecordingState.PAUSED)
+    }
+
+    recorder.onresume = () => {
+      setRecordingState(ERecordingState.RECORDING)
     }
 
     return recorder
@@ -293,6 +329,10 @@ export const ConversationModal: FC = () => {
     }
   }
 
+  const pauseRecording = () => mediaRecorderRef.current?.pause()
+
+  const resumeRecording = () => mediaRecorderRef.current?.resume()
+
   return (
     <div className="tw-flex-1 tw-justify-center tw-items-center tw-flex tw-overflow-visible tw-absolute tw-bottom-6 tw-inset-0 tw-z-50">
       <div className="tw-absolute tw-w-auto tw-mx-auto tw-max-w-3xl tw-bottom-0 tw-overflow-visible">
@@ -300,7 +340,11 @@ export const ConversationModal: FC = () => {
           {recordingState === ERecordingState.IDLE ? (
             <StartConversationContent startRecording={startRecording} />
           ) : (
-            <OngoingConversationContent stopRecording={stopRecording} />
+            <OngoingConversationContent
+              pauseRecording={pauseRecording}
+              resumeRecording={resumeRecording}
+              stopRecording={stopRecording}
+            />
           )}
         </div>
       </div>

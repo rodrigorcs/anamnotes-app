@@ -26,7 +26,7 @@ interface IProps {
 
 export const Avatar: FC<IProps> = ({ fullName, className }) => {
   const names = fullName.split(' ')
-  const lastName = names.pop()
+  const lastName = names.length > 1 ? names.pop() : null
 
   const firstChar: string = fullName[0]
   const lastChar: string = lastName?.[0] ?? ''
@@ -42,7 +42,7 @@ export const Avatar: FC<IProps> = ({ fullName, className }) => {
       }}
     >
       <span
-        className="tw-text-xs tw-font-semibold"
+        className="tw-text-[0.6875rem] tw-font-semibold"
         style={{
           color: stringToHslColor({ name: fullName, saturation: 30, lightness: 45 }),
         }}

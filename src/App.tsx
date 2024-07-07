@@ -11,13 +11,7 @@ import { IConversationsResponse } from './models/contracts/Conversations'
 import dayjs from 'dayjs'
 import { useConversationStore } from './stores/conversations'
 import { Summarization } from './components/summarization'
-
-export enum ERecordingState {
-  IDLE = 'idle',
-  RECORDING = 'recording',
-  WAITING_RESPONSE = 'waiting-response',
-  SUCCESS = 'success',
-}
+import { ERecordingState } from './stores/recording'
 
 export enum EModals {
   RESULTS = 'results',

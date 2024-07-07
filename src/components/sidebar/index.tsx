@@ -1,19 +1,31 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { Input } from '../common/Input'
 import { Button } from '../common/Button'
 import { ClientsList } from './ClientsList'
 import { Search as SearchIcon, Plus as PlusIcon } from 'iconoir-react'
 import { useConversationStore } from '../../stores/conversations'
+import { useRecordingStore } from '../../stores/recording'
 
 export const Sidebar: FC = () => {
   const clearConversationSelection = useConversationStore(
     (state) => state.clearConversationSelection,
   )
+  const clearRecordingState = useRecordingStore((state) => state.clearRecordingState)
+
+  const [searchQuery, setSearchQuery] = useState<string>('')
+
   return (
     <div className="tw-flex tw-flex-col tw-w-72 tw-bg-background-100 tw-py-6">
       <div className="tw-flex tw-flex-col tw-max-h-full">
         <div className="tw-flex tw-flex-col tw-px-6">
-          <Input placeholder="Pesquisar..." IconLeft={<SearchIcon />} />
+          <Input
+            value={searchQuery}
+            onChange={(event) => {
+              setSearchQuery(event.target.value)
+            }}
+            placeholder="Pesquisar..."
+            IconLeft={<SearchIcon />}
+          />
           <Button
             text="Nova anamnese"
             IconLeft={<PlusIcon />}
@@ -22,10 +34,11 @@ export const Sidebar: FC = () => {
             className="tw-mt-6"
             onClick={() => {
               clearConversationSelection()
+              clearRecordingState()
             }}
           />
         </div>
-        <ClientsList className="tw-mt-6 tw-ml-6" />
+        <ClientsList searchQuery={searchQuery} className="tw-mt-6 tw-ml-6" />
       </div>
     </div>
   )

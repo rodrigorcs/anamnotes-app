@@ -23,6 +23,7 @@ export const NewConversation: FC = () => {
           const isFirstItem = index === 0
           return (
             <div
+              key={index} // Using index as key because list is not mutable
               className={cn(
                 'tw-flex tw-flex-col tw-h-36 tw-w-52 tw-bg-background-100 tw-border tw-border-neutrals-100 tw-rounded-2xl tw-p-4 tw-justify-between',
                 !isFirstItem && 'tw-ml-6',

@@ -55,6 +55,7 @@ interface IProps {
   rounded?: boolean
   className?: ClassNameValue
   textClassName?: ClassNameValue
+  iconClassName?: ClassNameValue
   onClick?: () => void
 }
 
@@ -67,6 +68,7 @@ export const Button: FC<IProps> = ({
   rounded,
   className,
   textClassName,
+  iconClassName,
   onClick,
 }) => {
   const variantStyles = getStylesByVariant(variant)
@@ -88,6 +90,7 @@ export const Button: FC<IProps> = ({
           width: '1.5em',
           height: '1.5em',
           ...variantStyles.iconProps,
+          className: cn('tw-transition-colors', variantStyles.iconProps.className, iconClassName),
         }}
       >
         {IconLeft && IconLeft}

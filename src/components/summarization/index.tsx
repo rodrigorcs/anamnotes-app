@@ -2,8 +2,24 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { Button } from '../common/Button'
 import { SummarizationSection, getTitleFromSlug } from './SummarizationSection'
 import { useConversationStore } from '../../stores/conversations'
-import { ESectionSlugs } from '../../models/contracts/Summarization'
-import { CopyButton } from '../common/CopyButton'
+import { ESectionSlugs, TContentSection } from '../../models/contracts/Summarization'
+import { Check as CheckIcon, Copy as CopyIcon } from 'iconoir-react'
+import { copyToClipboard } from '../../utils/clipboard'
+
+const getSummarizationClipboardText = (
+  contentSections: TContentSection[],
+  filterSlugs: string[] | null,
+) => {
+  return (
+    contentSections
+      .filter((contentSection) => (filterSlugs ? filterSlugs.includes(contentSection.slug) : true))
+      .map((section) => {
+        const title = getTitleFromSlug(section.slug)
+        return `# ${title.toUpperCase()}\n${section.content}`
+      })
+      .join('\n\n') ?? ''
+  )
+}
 
 export const Summarization: FC = () => {
   const selectedConversation = useConversationStore((state) => state.selectedConversation)
@@ -35,13 +51,10 @@ export const Summarization: FC = () => {
     }
   }, [copiedSection])
 
-  const contentToCopy =
-    summarization?.content
-      .map((section) => {
-        const title = getTitleFromSlug(section.slug)
-        return `# ${title.toUpperCase()}\n${section.content}`
-      })
-      .join('\n\n') ?? ''
+  useEffect(() => {
+    if (!summarization) return
+    setExpandedSlugs(summarization.content.map((contentSection) => contentSection.slug))
+  }, [summarization])
 
   return (
     <div className="tw-flex tw-flex-col tw-w-[42rem] tw-py-10 tw-px-4">
@@ -51,6 +64,7 @@ export const Summarization: FC = () => {
           const isExpanded = expandedSlugs.includes(contentSection.slug)
           return (
             <SummarizationSection
+              key={`${summarization.id}#${contentSection.slug}`}
               isExpanded={isExpanded}
               toggleExpanded={handleToggleExpanded}
               contentSection={contentSection}
@@ -65,24 +79,35 @@ export const Summarization: FC = () => {
         <Button
           text="Copiar tudo"
           IconRight={
-            <CopyButton
-              isCopied={copiedSection === 'all'}
-              setCopiedSection={setCopiedSection}
-              contentSection={{
-                slug: 'all' as ESectionSlugs,
-                content: contentToCopy,
-              }}
-            />
+            <>
+              {copiedSection === 'all' ? (
+                <CheckIcon className="tw-text-feedback-positive-300 group-hover:tw-text-feedback-positive-500" />
+              ) : (
+                <CopyIcon />
+              )}
+            </>
           }
+          iconClassName={copiedSection === 'all' && 'tw-text-feedback-positive-300'}
           variant="secondary"
           rounded
           className="tw-font-medium"
-          onClick={() => {}} // TODO: Change copy logic to button
+          onClick={() => {
+            const content = getSummarizationClipboardText(summarization?.content ?? [], null)
+            copyToClipboard(content)
+            setCopiedSection('all')
+          }} // TODO: Change copy logic to button
         />
         <Button
           text="Copiar seções expandidas"
           variant="tertiary"
           className="tw-ml-2 tw-font-medium"
+          onClick={() => {
+            const content = getSummarizationClipboardText(
+              summarization?.content ?? [],
+              expandedSlugs,
+            )
+            copyToClipboard(content)
+          }}
         />
       </div>
     </div>
