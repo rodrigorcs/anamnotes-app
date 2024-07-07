@@ -5,12 +5,13 @@ import { cn } from '../../utils/className'
 import { Plus as PlusIcon, Minus as MinusIcon } from 'iconoir-react'
 import { ESectionSlugs, TContentSection } from '../../models/contracts/Summarization'
 import { CopyButton } from '../common/CopyButton'
+import { TCopiedSection } from '.'
 
 interface IProps {
   contentSection: TContentSection
   isExpanded: boolean
-  copiedSection: ESectionSlugs | 'all' | null
-  setCopiedSection: (slug: ESectionSlugs | 'all' | null) => void
+  copiedSection: TCopiedSection
+  setCopiedSection: (slug: TCopiedSection) => void
   toggleExpanded: (slug: string) => void
   isFirstItem?: boolean
 }

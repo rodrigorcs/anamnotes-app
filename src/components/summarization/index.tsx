@@ -21,13 +21,15 @@ const getSummarizationClipboardText = (
   )
 }
 
+export type TCopiedSection = ESectionSlugs | 'all' | 'expanded' | null
+
 export const Summarization: FC = () => {
   const selectedConversation = useConversationStore((state) => state.selectedConversation)
   const summarization = selectedConversation?.summarizations[0]
   const [expandedSlugs, setExpandedSlugs] = useState<string[]>(
     summarization?.content.map((contentSection) => contentSection.slug) || [],
   )
-  const [copiedSection, setCopiedSection] = useState<ESectionSlugs | 'all' | null>(null)
+  const [copiedSection, setCopiedSection] = useState<TCopiedSection>(null)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleToggleExpanded = (slug: string) => {
@@ -101,12 +103,18 @@ export const Summarization: FC = () => {
           text="Copiar seções expandidas"
           variant="tertiary"
           className="tw-ml-2 tw-font-medium"
+          IconRight={
+            copiedSection === 'expanded' && (
+              <CheckIcon className="tw-text-feedback-positive-300 group-hover:tw-text-feedback-positive-500" />
+            )
+          }
           onClick={() => {
             const content = getSummarizationClipboardText(
               summarization?.content ?? [],
               expandedSlugs,
             )
             copyToClipboard(content)
+            setCopiedSection('expanded')
           }}
         />
       </div>
