@@ -1,8 +1,9 @@
-import { FC, useState } from 'react'
-import { Copy as CopyIcon } from 'iconoir-react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { Button } from '../common/Button'
-import { SummarizationSection } from './SummarizationSection'
+import { SummarizationSection, getTitleFromSlug } from './SummarizationSection'
 import { useConversationStore } from '../../stores/conversations'
+import { ESectionSlugs } from '../../models/contracts/Summarization'
+import { CopyButton } from '../common/CopyButton'
 
 export const Summarization: FC = () => {
   const selectedConversation = useConversationStore((state) => state.selectedConversation)
@@ -10,6 +11,8 @@ export const Summarization: FC = () => {
   const [expandedSlugs, setExpandedSlugs] = useState<string[]>(
     summarization?.content.map((contentSection) => contentSection.slug) || [],
   )
+  const [copiedSection, setCopiedSection] = useState<ESectionSlugs | 'all' | null>(null)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleToggleExpanded = (slug: string) => {
     if (expandedSlugs.includes(slug)) {
@@ -18,6 +21,27 @@ export const Summarization: FC = () => {
       setExpandedSlugs([...expandedSlugs, slug])
     }
   }
+
+  useEffect(() => {
+    if (copiedSection) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        setCopiedSection(null)
+        timeoutRef.current = null
+      }, 1500)
+    }
+  }, [copiedSection])
+
+  const contentToCopy =
+    summarization?.content
+      .map((section) => {
+        const title = getTitleFromSlug(section.slug)
+        return `# ${title.toUpperCase()}\n${section.content}`
+      })
+      .join('\n\n') ?? ''
 
   return (
     <div className="tw-flex tw-flex-col tw-w-[42rem] tw-py-10 tw-px-4">
@@ -30,6 +54,8 @@ export const Summarization: FC = () => {
               isExpanded={isExpanded}
               toggleExpanded={handleToggleExpanded}
               contentSection={contentSection}
+              copiedSection={copiedSection}
+              setCopiedSection={setCopiedSection}
               isFirstItem={index === 0}
             />
           )
@@ -38,10 +64,20 @@ export const Summarization: FC = () => {
       <div className="tw-flex tw-mt-8">
         <Button
           text="Copiar tudo"
-          IconRight={<CopyIcon />}
+          IconRight={
+            <CopyButton
+              isCopied={copiedSection === 'all'}
+              setCopiedSection={setCopiedSection}
+              contentSection={{
+                slug: 'all' as ESectionSlugs,
+                content: contentToCopy,
+              }}
+            />
+          }
           variant="secondary"
           rounded
           className="tw-font-medium"
+          onClick={() => {}} // TODO: Change copy logic to button
         />
         <Button
           text="Copiar seções expandidas"

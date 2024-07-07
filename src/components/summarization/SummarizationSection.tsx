@@ -2,17 +2,20 @@ import { IconoirProvider } from 'iconoir-react'
 import { FC } from 'react'
 import { theme } from '../../theme'
 import { cn } from '../../utils/className'
-import { Plus as PlusIcon, Minus as MinusIcon, Copy as CopyIcon } from 'iconoir-react'
+import { Plus as PlusIcon, Minus as MinusIcon } from 'iconoir-react'
 import { ESectionSlugs, TContentSection } from '../../models/contracts/Summarization'
+import { CopyButton } from '../common/CopyButton'
 
 interface IProps {
   contentSection: TContentSection
   isExpanded: boolean
+  copiedSection: ESectionSlugs | 'all' | null
+  setCopiedSection: (slug: ESectionSlugs | 'all' | null) => void
   toggleExpanded: (slug: string) => void
   isFirstItem?: boolean
 }
 
-const getTitleFromSlug = (slug: string) => {
+export const getTitleFromSlug = (slug: string) => {
   const titleMapping: Record<ESectionSlugs, string> = {
     identificacaoPaciente: 'Identificação do paciente',
     queixaPrincipal: 'Queixa principal',
@@ -34,6 +37,8 @@ const getTitleFromSlug = (slug: string) => {
 export const SummarizationSection: FC<IProps> = ({
   contentSection,
   isExpanded,
+  copiedSection,
+  setCopiedSection,
   toggleExpanded,
   isFirstItem,
 }) => {
@@ -62,15 +67,11 @@ export const SummarizationSection: FC<IProps> = ({
           <h2 className="tw-text-neutrals-700 tw-font-semibold tw-text-xl tw-leading-8 tw-ml-1">
             {title}
           </h2>
-          {isExpanded && (
-            <CopyIcon
-              color={theme.colors['neutrals-400']}
-              strokeWidth={1.5}
-              width="1.25em"
-              height="1.25em"
-              className="tw-ml-2 tw-cursor-pointer tw-transition-colors hover:tw-text-neutrals-600"
-            />
-          )}
+          <CopyButton
+            contentSection={contentSection}
+            setCopiedSection={setCopiedSection}
+            isCopied={contentSection.slug === copiedSection}
+          />
         </div>
         {isExpanded && (
           <p className="tw-text-neutrals-500 tw-mt-2 tw-ml-6">{contentSection.content}</p>
