@@ -3,31 +3,64 @@ import { FC } from 'react'
 import { theme } from '../../theme'
 import { cn } from '../../utils/className'
 import { Plus as PlusIcon, Minus as MinusIcon, Copy as CopyIcon } from 'iconoir-react'
+import { ESectionSlugs, TContentSection } from '../../models/contracts/Summarization'
 
 interface IProps {
-  isExpanded?: boolean
+  contentSection: TContentSection
+  isExpanded: boolean
+  toggleExpanded: (slug: string) => void
   isFirstItem?: boolean
 }
 
-export const SummarizationSection: FC<IProps> = ({ isExpanded, isFirstItem }) => {
+const getTitleFromSlug = (slug: string) => {
+  const titleMapping: Record<ESectionSlugs, string> = {
+    identificacaoPaciente: 'Identificação do paciente',
+    queixaPrincipal: 'Queixa principal',
+    historiaDoencaAtual: 'Histórico da doença atual',
+    historiaFamiliar: 'Histórico familiar',
+    historiaPessoal: 'Historico pessoal',
+    exameFisico: 'Exame físico',
+    exameEstadoMental: 'Exame de estado mental',
+    hipotesesDiagnosticas: 'Hipóteses diagnósticas',
+    examesComplementares: 'Exames complementares',
+    conduta: 'Conduta',
+    prognostico: 'Progóstico',
+    sequelas: 'Sequelas',
+  } as const
+
+  return titleMapping[slug as keyof typeof titleMapping] ?? null
+}
+
+export const SummarizationSection: FC<IProps> = ({
+  contentSection,
+  isExpanded,
+  toggleExpanded,
+  isFirstItem,
+}) => {
+  const title = getTitleFromSlug(contentSection.slug)
+
   return (
     <div className={cn('flex-1 tw-flex', !isFirstItem && 'tw-mt-8')}>
-      <div className="tw-mt-1">
-        <IconoirProvider
-          iconProps={{
-            color: theme.colors['neutrals-500'],
-            strokeWidth: 2,
-            width: '1.5em',
-            height: '1.5em',
-          }}
-        >
-          {isExpanded ? <MinusIcon /> : <PlusIcon />}
-        </IconoirProvider>
-      </div>
-      <div className="tw-ml-3 tw-flex-1 tw-flex tw-flex-col">
+      <div className="tw-flex-1 tw-flex tw-flex-col">
         <div className="tw-flex tw-flex-row tw-items-center">
-          <h2 className="tw-text-neutrals-700 tw-font-semibold tw-text-xl tw-leading-8">
-            Queixa Principal
+          <button
+            onClick={() => {
+              toggleExpanded(contentSection.slug)
+            }}
+          >
+            <IconoirProvider
+              iconProps={{
+                color: theme.colors['neutrals-500'],
+                strokeWidth: 2,
+                width: '1.25em',
+                height: '1.25em',
+              }}
+            >
+              {isExpanded ? <MinusIcon /> : <PlusIcon />}
+            </IconoirProvider>
+          </button>
+          <h2 className="tw-text-neutrals-700 tw-font-semibold tw-text-xl tw-leading-8 tw-ml-1">
+            {title}
           </h2>
           {isExpanded && (
             <CopyIcon
@@ -40,11 +73,7 @@ export const SummarizationSection: FC<IProps> = ({ isExpanded, isFirstItem }) =>
           )}
         </div>
         {isExpanded && (
-          <p className="tw-text-neutrals-500 tw-mt-2">
-            João, 34 anos, sexo masculino, caucasiano, jornalista, apresentou-se à clínica com a
-            queixa principal de insônia. O paciente relata que tem dificuldade em iniciar e manter o
-            sono. Relata ainda sonolência durante o dia no turno em que trabalha.
-          </p>
+          <p className="tw-text-neutrals-500 tw-mt-2 tw-ml-6">{contentSection.content}</p>
         )}
       </div>
     </div>

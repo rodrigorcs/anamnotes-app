@@ -2,7 +2,10 @@ import { create } from 'zustand'
 import { IClient, IConversation } from '../models/contracts/Conversations'
 
 const getUniqueClients = (conversations: IConversation[]): IClient[] => {
-  const clients = conversations.map((conversation) => conversation.client)
+  const clients = conversations.map((conversation) => ({
+    ...conversation.client,
+    lastConversationDate: conversation.createdAt, // TODO: Fix this to actual last conversation date
+  }))
   const uniqueIds = [...new Set(clients.map((client) => client.id))]
   const uniqueClients = clients.filter((client) => uniqueIds.includes(client.id))
 
@@ -17,6 +20,7 @@ interface IConversationStore {
   selectConversation: (conversationId: string) => void
   selectLatestConversationByClientId: (clientId: string) => void
   clearConversationSelection: () => void
+  addConversation: (conversation: IConversation) => void
 }
 
 export const useConversationStore = create<IConversationStore>((set) => ({
@@ -36,4 +40,12 @@ export const useConversationStore = create<IConversationStore>((set) => ({
         state.conversations.find((conversation) => conversation.client.id === clientId) ?? null,
     })),
   clearConversationSelection: () => set({ selectedConversation: null }),
+  addConversation: (conversation: IConversation) =>
+    set((state) => {
+      const updatedConversations = [conversation, ...state.conversations]
+      return {
+        conversations: updatedConversations,
+        clients: getUniqueClients(updatedConversations),
+      }
+    }),
 }))

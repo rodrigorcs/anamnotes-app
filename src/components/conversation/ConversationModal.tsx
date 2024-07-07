@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import { Input } from '../common/Input'
 import { Button } from '../common/Button'
 import {
@@ -9,31 +9,90 @@ import {
 } from 'iconoir-react'
 import { cn } from '../../utils/className'
 import { theme } from '../../theme'
+import axios from 'axios'
+import { ERecordingState } from '../../App'
+import { TSummarizationWebsocketMessage, EWebsocketMessageTypes } from '../../models/apis/websocket'
+import { Spinner } from '../common/Spinner'
 import { useConversationStore } from '../../stores/conversations'
+import { IConversationWithSummarizations } from '../../models/contracts/Conversations'
+import { useRecordingStore } from '../../stores/recording'
 
-const StartConversationContent: FC = () => {
+interface IStartConversationContentProps {
+  startRecording: (clientName: string) => void
+}
+
+const StartConversationContent: FC<IStartConversationContentProps> = ({ startRecording }) => {
+  const [clientNameInput, setClientNameInput] = useState('')
+  const setClientName = useRecordingStore((state) => state.setClientName)
   return (
-    <>
+    <div className="tw-flex tw-flex-col tw-p-6">
       <p className="tw-text-neutrals-600">Nome do paciente</p>
-      <Input placeholder="João da Silva" className="tw-mt-2" />
+      <Input
+        value={clientNameInput}
+        onChange={(event) => {
+          setClientNameInput(event.target.value)
+        }}
+        placeholder="João da Silva"
+        className="tw-mt-2"
+      />
       <Button
         text="Iniciar anamnese"
         IconLeft={<MicIcon width={'1.125rem'} height={'1.125rem'} />}
         rounded
         className="tw-mt-6"
+        onClick={() => {
+          setClientName(clientNameInput)
+          startRecording(clientNameInput)
+        }}
       />
-    </>
+    </div>
   )
 }
 
-const OngoingConversationContent: FC = () => {
+const getContentByRecordingState = (recordingState: ERecordingState) => {
+  const fabContentMapping: Record<string, { Icon: ReactNode; title: string | null }> = {
+    [ERecordingState.RECORDING]: {
+      Icon: <CheckIcon />,
+      title: 'Ouvindo o paciente',
+    },
+    [ERecordingState.WAITING_RESPONSE]: {
+      Icon: (
+        <Spinner
+          className="tw-animate-spin"
+          color={theme.colors['neutrals-white']}
+          strokeWidth={2}
+          width="1.5em"
+          height="1.5em"
+        />
+      ),
+      title: 'Analisando',
+    },
+    [ERecordingState.SUCCESS]: {
+      Icon: <CheckIcon />,
+      title: 'Tudo pronto!',
+    },
+  }
+
+  return fabContentMapping[recordingState as ERecordingState]
+}
+
+interface IOngoingConversationContentProps {
+  stopRecording: () => void
+}
+
+const OngoingConversationContent: FC<IOngoingConversationContentProps> = ({ stopRecording }) => {
+  const clientName = useRecordingStore((state) => state.clientName)
+  const recordingState = useRecordingStore((state) => state.recordingState)
+
+  const content = getContentByRecordingState(recordingState)
+
   return (
     <>
       <div className="tw-flex tw-flex-col">
         <div className="tw-flex tw-flex-1 tw-p-6">
           <div className="tw-flex tw-flex-col tw-flex-1 tw-justify-between">
-            <h3 className="tw-font-semibold tw-text-xl">Rodrigo Costa</h3>
-            <h3 className="tw-text-neutrals-600">Ouvindo o paciente - 1:23</h3>
+            <h3 className="tw-font-semibold tw-text-xl">{clientName}</h3>
+            <h3 className="tw-text-neutrals-600">{`${content.title} - 1:23`}</h3>
           </div>
           <div className="tw-flex">
             <button
@@ -56,6 +115,8 @@ const OngoingConversationContent: FC = () => {
               className={cn(
                 'tw-bg-brand-500 tw-rounded-full tw-flex tw-items-center tw-justify-center hover:tw-bg-brand-700 disabled:tw-bg-brand-300 tw-size-14 tw-transition-colors tw-ml-4',
               )}
+              onClick={stopRecording}
+              disabled={recordingState === ERecordingState.WAITING_RESPONSE}
             >
               <IconoirProvider
                 iconProps={{
@@ -65,7 +126,7 @@ const OngoingConversationContent: FC = () => {
                   height: '1.5em',
                 }}
               >
-                <CheckIcon />
+                {content.Icon}
               </IconoirProvider>
             </button>
           </div>
@@ -84,11 +145,163 @@ const OngoingConversationContent: FC = () => {
 }
 
 export const ConversationModal: FC = () => {
+  const audioStreamRef = useRef<MediaStream | null>(null)
+  const lastAudioChunkIdRef = useRef<number | null>(null)
+  const conversationIdRef = useRef<string | null>(null)
+  const chunkIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const recordingStateRef = useRef<ERecordingState>(ERecordingState.IDLE)
+
+  const addConversation = useConversationStore((state) => state.addConversation)
+  const selectConversation = useConversationStore((state) => state.selectConversation)
+  const recordingState = useRecordingStore((state) => state.recordingState)
+  const setRecordingState = useRecordingStore((state) => state.setRecordingState)
+  const clientName = useRecordingStore((state) => state.clientName)
+
+  useEffect(() => {
+    recordingStateRef.current = recordingState
+  }, [recordingState])
+
+  const initializeMediaRecorder = (
+    stream: MediaStream,
+    chunkCallback: (audioChunk: Blob) => void,
+    stopCallback: (audioChunk: Blob) => void,
+  ) => {
+    const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
+
+    recorder.ondataavailable = (event: BlobEvent) => {
+      const blob = new Blob([event.data], { type: 'audio/webm' })
+      recordingStateRef.current === ERecordingState.RECORDING
+        ? chunkCallback(blob)
+        : stopCallback(blob)
+    }
+
+    return recorder
+  }
+
+  const startNewRecorder = async () => {
+    if (!audioStreamRef.current) return
+
+    const recorder = initializeMediaRecorder(
+      audioStreamRef.current,
+      sendAudioChunk,
+      sendLastAudioChunk,
+    )
+
+    mediaRecorderRef.current = recorder
+    recorder.start()
+    chunkIntervalRef.current = setTimeout(() => {
+      recorder.stop()
+      startNewRecorder()
+    }, 60000)
+  }
+
+  const uploadAudioChunk = async (audioChunk: Blob, isLastChunk: boolean) => {
+    const lastAudioChunkId = lastAudioChunkIdRef.current
+    const conversationId = conversationIdRef.current
+
+    const currentChunkId = lastAudioChunkId ? lastAudioChunkId + 1 : 1
+    const presignedUploadUrlResponse = await axios.get(
+      `https://api.anamnotes.com/v1/conversations/${conversationId}/audioChunks/${currentChunkId}/uploadUrl`,
+      {
+        params: { isLastChunk },
+      },
+    )
+
+    await axios.put(presignedUploadUrlResponse.data.signedUrl, audioChunk)
+
+    lastAudioChunkIdRef.current = currentChunkId
+  }
+
+  const sendAudioChunk = async (audioChunk: Blob) => {
+    await uploadAudioChunk(audioChunk, false)
+  }
+
+  const getSummarizationMessage = async () =>
+    new Promise<TSummarizationWebsocketMessage['data']>((resolve, reject) => {
+      const wsURL = new URL('wss://ws.anamnotes.com')
+      wsURL.searchParams.append('conversationId', conversationIdRef.current ?? '')
+
+      const ws = new WebSocket(wsURL)
+      ws.onmessage = (event) => {
+        const message = JSON.parse(event.data) as TSummarizationWebsocketMessage
+        if (message.type !== EWebsocketMessageTypes.SUMMARIZATION) return
+        if (ws.readyState === ws.OPEN) ws.close()
+
+        if (message.success && message.data) {
+          resolve(message.data)
+        } else {
+          reject(message.error)
+        }
+      }
+      ws.onerror = (error) => {
+        reject(error)
+      }
+    })
+
+  const sendLastAudioChunk = async (audioChunk: Blob) => {
+    await uploadAudioChunk(audioChunk, true)
+
+    try {
+      const conversation = (await getSummarizationMessage()) as IConversationWithSummarizations
+      // const validatedSections = parseSections(summarizationMessage?.content)
+      addConversation(conversation as IConversationWithSummarizations)
+      selectConversation(conversation.id)
+      setRecordingState(ERecordingState.SUCCESS)
+    } catch (error) {
+      console.error(error)
+      setRecordingState(ERecordingState.IDLE)
+    }
+  }
+
+  const getConversationId = async (clientName: string) => {
+    const startConversationResponse = await axios.post(
+      'https://api.anamnotes.com/v1/conversations',
+      {
+        client: {
+          name: clientName,
+        },
+      },
+    )
+    conversationIdRef.current = startConversationResponse.data.conversationId
+  }
+
+  const startRecording = async (clientName: string) => {
+    lastAudioChunkIdRef.current = null
+
+    const stream = await navigator.mediaDevices?.getUserMedia({ audio: true })
+    audioStreamRef.current = stream
+
+    await startNewRecorder()
+    setRecordingState(ERecordingState.RECORDING)
+    getConversationId(clientName)
+  }
+
+  const stopRecording = async () => {
+    if (chunkIntervalRef.current) {
+      clearTimeout(chunkIntervalRef.current)
+    }
+    setRecordingState(ERecordingState.WAITING_RESPONSE)
+
+    mediaRecorderRef.current?.stop()
+
+    if (audioStreamRef.current) {
+      const tracks = audioStreamRef.current.getTracks()
+      tracks.forEach((track) => {
+        track.stop()
+      })
+    }
+  }
+
   return (
     <div className="tw-flex-1 tw-justify-center tw-items-center tw-flex tw-overflow-visible tw-absolute tw-bottom-6 tw-inset-0 tw-z-50">
       <div className="tw-absolute tw-w-auto tw-mx-auto tw-max-w-3xl tw-bottom-0 tw-overflow-visible">
         <div className="tw-w-[38rem] tw-rounded-2xl tw-relative tw-flex tw-flex-col tw-bg-neutrals-white tw-shadow-[0_4px_32px_0px_rgba(0,0,0,0.10)]">
-          <OngoingConversationContent />
+          {recordingState === ERecordingState.IDLE ? (
+            <StartConversationContent startRecording={startRecording} />
+          ) : (
+            <OngoingConversationContent stopRecording={stopRecording} />
+          )}
         </div>
       </div>
     </div>

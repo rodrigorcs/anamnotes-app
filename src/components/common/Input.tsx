@@ -1,17 +1,26 @@
 import { IconoirProvider } from 'iconoir-react'
-import { FC, ReactNode } from 'react'
+import { ChangeEvent, FC, ReactNode } from 'react'
 import { ClassNameValue } from 'tailwind-merge'
 import { theme } from '../../theme'
 import { cn } from '../../utils/className'
 
 interface IProps {
+  value?: string
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void
   placeholder?: string
   IconLeft?: ReactNode
   IconRight?: ReactNode
   className?: ClassNameValue
 }
 
-export const Input: FC<IProps> = ({ placeholder, IconLeft, IconRight, className }) => {
+export const Input: FC<IProps> = ({
+  value,
+  onChange,
+  placeholder,
+  IconLeft,
+  IconRight,
+  className,
+}) => {
   return (
     <div
       className={cn(
@@ -31,6 +40,8 @@ export const Input: FC<IProps> = ({ placeholder, IconLeft, IconRight, className 
         <input
           className={cn('tw-flex-1 tw-outline-none', IconLeft && 'tw-ml-2 ')}
           placeholder={placeholder}
+          value={value}
+          onChange={onChange}
         />
         {IconRight && IconRight}
       </IconoirProvider>

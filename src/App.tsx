@@ -33,16 +33,21 @@ function App() {
   useEffect(() => {
     const execute = async () => {
       const response = await anamnotesAPI.get<IConversationsResponse>(Endpoints.CONVERSATIONS)
-      const conversations = response.data.conversations.map((conversation) => ({
-        ...conversation,
-        createdAt: dayjs(conversation.createdAt),
-        updatedAt: conversation.updatedAt ? dayjs(conversation.updatedAt) : undefined,
-        summarizations: conversation.summarizations.map((summarization) => ({
-          ...summarization,
-          createdAt: dayjs(summarization.createdAt),
-          updatedAt: summarization.updatedAt ? dayjs(summarization.updatedAt) : undefined,
-        })),
-      }))
+      const conversations = response.data.conversations
+        .map((conversation) => ({
+          ...conversation,
+          createdAt: dayjs(conversation.createdAt),
+          updatedAt: conversation.updatedAt ? dayjs(conversation.updatedAt) : undefined,
+          summarizations: conversation.summarizations
+            .map((summarization) => ({
+              ...summarization,
+              createdAt: dayjs(summarization.createdAt),
+              updatedAt: summarization.updatedAt ? dayjs(summarization.updatedAt) : undefined,
+            }))
+            .sort((a, b) => b.createdAt.diff(a.createdAt)),
+        }))
+        .sort((a, b) => b.createdAt.diff(a.createdAt))
+
       updateConversations(conversations)
     }
 

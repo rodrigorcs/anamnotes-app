@@ -1,3 +1,5 @@
+import { IConversationWithSummarizations } from '../contracts/Conversations'
+
 export enum EWebsocketMessageTypes {
   SUMMARIZATION = 'summarization',
 }
@@ -6,17 +8,11 @@ interface IWebsocketMessageError {
   message: string | null
 }
 
-interface IWebsocketMessage<DataType> {
+export interface IWebsocketMessage<DataType> {
   success: boolean
   type: EWebsocketMessageTypes
-  data?: DataType
+  data?: DataType | IWebsocketMessageError
   error?: IWebsocketMessageError
 }
 
-export type TSummarizationWebsocketMessage = IWebsocketMessage<{
-  conversationId: string
-  content: {
-    slug: string
-    content: string
-  }[]
-}>
+export type TSummarizationWebsocketMessage = IWebsocketMessage<IConversationWithSummarizations>
