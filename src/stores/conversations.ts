@@ -1,15 +1,26 @@
 import { create } from 'zustand'
 import { IClient, IConversation } from '../models/contracts/Conversations'
 
-const getUniqueClients = (conversations: IConversation[]): IClient[] => {
-  const clients = conversations.map((conversation) => ({
-    ...conversation.client,
-    lastConversationDate: conversation.createdAt, // TODO: Fix this to actual last conversation date
-  }))
-  const uniqueIds = [...new Set(clients.map((client) => client.id))]
-  const uniqueClients = clients.filter((client) => uniqueIds.includes(client.id))
+const extractClientsWithLastConversationDate = (conversations: IConversation[]): IClient[] => {
+  const clientMap = new Map<string, IClient>()
 
-  return uniqueClients
+  conversations.forEach((conversation) => {
+    const { client, createdAt } = conversation
+
+    const existingClient = clientMap.get(client.id)
+    if (existingClient) {
+      if (createdAt.isAfter(existingClient.lastConversationDate)) {
+        existingClient.lastConversationDate = createdAt
+      }
+    } else {
+      clientMap.set(client.id, {
+        ...client,
+        lastConversationDate: createdAt,
+      })
+    }
+  })
+
+  return Array.from(clientMap.values())
 }
 
 interface IConversationStore {
@@ -28,7 +39,7 @@ export const useConversationStore = create<IConversationStore>((set) => ({
   clients: [],
   selectedConversation: null,
   updateConversations: (conversations: IConversation[]) =>
-    set(() => ({ conversations, clients: getUniqueClients(conversations) })),
+    set(() => ({ conversations, clients: extractClientsWithLastConversationDate(conversations) })),
   selectConversation: (conversationId: string) =>
     set((state) => ({
       selectedConversation:
@@ -45,7 +56,7 @@ export const useConversationStore = create<IConversationStore>((set) => ({
       const updatedConversations = [conversation, ...state.conversations]
       return {
         conversations: updatedConversations,
-        clients: getUniqueClients(updatedConversations),
+        clients: extractClientsWithLastConversationDate(updatedConversations),
       }
     }),
 }))

@@ -4,6 +4,7 @@ import { cn } from '../../../utils/className'
 import { ClientsListGroup } from './ClientsListGroup'
 import { useConversationStore } from '../../../stores/conversations'
 import { IClient } from '../../../models/contracts/Conversations'
+import dayjs from 'dayjs'
 
 interface IProps {
   searchQuery: string
@@ -24,26 +25,38 @@ interface IClientGroup {
 }
 
 const getGroupedClientsByPeriod = (clients: IClient[]): IClientGroup[] => {
+  const currentDate = dayjs()
+
   const groupedClientsMapping: Record<EClientGroupSlugs, IClientGroup> = {
     [EClientGroupSlugs.TODAY]: {
       slug: EClientGroupSlugs.TODAY,
       title: 'Hoje',
-      clients: clients.slice(0, 2),
+      clients: clients.filter((client) => client.lastConversationDate.isSame(currentDate, 'day')),
     },
     [EClientGroupSlugs.YESTERDAY]: {
       slug: EClientGroupSlugs.YESTERDAY,
       title: 'Ontem',
-      clients: clients.slice(2, 6),
+      clients: clients.filter((client) =>
+        client.lastConversationDate.isSame(currentDate.subtract(1, 'day'), 'day'),
+      ),
     },
     [EClientGroupSlugs.LAST_WEEK]: {
       slug: EClientGroupSlugs.LAST_WEEK,
       title: 'Últimos 7 dias',
-      clients: clients.slice(6, 12),
+      clients: clients.filter(
+        (client) =>
+          client.lastConversationDate.isBefore(currentDate.subtract(1, 'day'), 'day') &&
+          client.lastConversationDate.isAfter(currentDate.subtract(8, 'day'), 'day'),
+      ),
     },
     [EClientGroupSlugs.LAST_MONTH]: {
       slug: EClientGroupSlugs.LAST_MONTH,
       title: 'Últimos 30 dias',
-      clients: clients.slice(12, 20),
+      clients: clients.filter(
+        (client) =>
+          client.lastConversationDate.isBefore(currentDate.subtract(7, 'day'), 'day') &&
+          client.lastConversationDate.isAfter(currentDate.subtract(31, 'day'), 'day'),
+      ),
     },
   }
 

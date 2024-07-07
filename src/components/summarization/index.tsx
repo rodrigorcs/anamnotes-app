@@ -97,7 +97,7 @@ export const Summarization: FC = () => {
             const content = getSummarizationClipboardText(summarization?.content ?? [], null)
             copyToClipboard(content)
             setCopiedSection('all')
-          }} // TODO: Change copy logic to button
+          }}
         />
         <Button
           text="Copiar seções expandidas"

@@ -6,7 +6,7 @@ export const NewConversation: FC = () => {
     <div className="tw-flex tw-flex-col tw-flex-1">
       <h1 className="tw-text-6xl tw-font-medium ">
         <span className="tw-bg-gradient-to-tr tw-from-[#3C65C7] tw-to-[#1F97B1] tw-text-neutrals-white tw-text-opacity-0 tw-bg-clip-text">
-          Olá, Fernando!
+          Olá, Roque!
         </span>{' '}
         👋🏻
       </h1>
