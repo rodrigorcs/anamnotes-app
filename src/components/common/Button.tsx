@@ -55,6 +55,7 @@ interface IProps {
   rounded?: boolean
   className?: ClassNameValue
   textClassName?: ClassNameValue
+  onClick?: () => void
 }
 
 export const Button: FC<IProps> = ({
@@ -66,6 +67,7 @@ export const Button: FC<IProps> = ({
   rounded,
   className,
   textClassName,
+  onClick,
 }) => {
   const variantStyles = getStylesByVariant(variant)
 
@@ -78,6 +80,7 @@ export const Button: FC<IProps> = ({
         size === 'small' ? 'tw-h-10' : 'tw-h-11',
         className,
       )}
+      onClick={onClick}
     >
       <IconoirProvider
         iconProps={{

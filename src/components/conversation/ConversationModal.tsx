@@ -9,6 +9,7 @@ import {
 } from 'iconoir-react'
 import { cn } from '../../utils/className'
 import { theme } from '../../theme'
+import { useConversationStore } from '../../stores/conversations'
 
 const StartConversationContent: FC = () => {
   return (

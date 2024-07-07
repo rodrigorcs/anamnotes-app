@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { TSection } from './models/contracts/sections'
 import '../styles.css'
 import { Sidebar } from './components/sidebar'
 import { Topbar } from './components/topbar'
@@ -7,6 +6,11 @@ import { MainContainer } from './components/containers/MainContainer'
 import { ContentContainer } from './components/containers/ContentContainer'
 import { RootContainer } from './components/containers/RootContainer'
 import { Conversation } from './components/conversation'
+import { Endpoints, anamnotesAPI } from './apis/anamnotesRest'
+import { IConversationsResponse } from './models/contracts/Conversations'
+import dayjs from 'dayjs'
+import { useConversationStore } from './stores/conversations'
+import { Summarization } from './components/summarization'
 
 export enum ERecordingState {
   IDLE = 'idle',
@@ -19,11 +23,31 @@ export enum EModals {
   RESULTS = 'results',
 }
 
-function App(props: unknown) {
+function App() {
   const [recordingState, setRecordingState] = useState<ERecordingState>(ERecordingState.IDLE)
   const [activeModal, setActiveModal] = useState<EModals | null>(null)
   const [isModalExpanded, setIsModalExpanded] = useState<boolean>(false)
-  const [sections, setSections] = useState<TSection[]>([])
+  const selectedConversation = useConversationStore((state) => state.selectedConversation)
+  const updateConversations = useConversationStore((state) => state.updateConversations)
+
+  useEffect(() => {
+    const execute = async () => {
+      const response = await anamnotesAPI.get<IConversationsResponse>(Endpoints.CONVERSATIONS)
+      const conversations = response.data.conversations.map((conversation) => ({
+        ...conversation,
+        createdAt: dayjs(conversation.createdAt),
+        updatedAt: conversation.updatedAt ? dayjs(conversation.updatedAt) : undefined,
+        summarizations: conversation.summarizations.map((summarization) => ({
+          ...summarization,
+          createdAt: dayjs(summarization.createdAt),
+          updatedAt: summarization.updatedAt ? dayjs(summarization.updatedAt) : undefined,
+        })),
+      }))
+      updateConversations(conversations)
+    }
+
+    execute()
+  }, [])
 
   useEffect(() => {
     if (recordingState === ERecordingState.SUCCESS) {
@@ -45,8 +69,7 @@ function App(props: unknown) {
       <MainContainer>
         <Topbar />
         <ContentContainer>
-          <Conversation />
-          {/* <Summarization /> */}
+          {selectedConversation ? <Summarization /> : <Conversation />}
         </ContentContainer>
       </MainContainer>
     </RootContainer>

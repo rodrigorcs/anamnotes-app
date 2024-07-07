@@ -16,6 +16,7 @@
     "@aws-sdk/client-s3": "^3.577.0",
     "axios": "^1.7.1",
     "clsx": "^2.1.1",
+    "dayjs": "^1.11.11",
     "framer-motion": "^11.2.9",
     "iconoir-react": "^7.7.0",
     "openai": "^4.40.0",
@@ -25,7 +26,8 @@
     "regenerator-runtime": "^0.14.1",
     "tailwind-merge": "^2.3.0",
     "websocket": "^1.0.35",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@react-spring/web": "^9.7.3",

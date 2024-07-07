@@ -2,9 +2,10 @@ import { FC } from 'react'
 import { ClassNameValue } from 'tailwind-merge'
 import { cn } from '../../../utils/className'
 import { ClientsListGroup } from './ClientsListGroup'
+import { useConversationStore } from '../../../stores/conversations'
+import { IClient } from '../../../models/contracts/Conversations'
 
 interface IProps {
-  clients: string[]
   className?: ClassNameValue
 }
 
@@ -17,10 +18,10 @@ enum EClientGroupSlugs {
 
 interface IClientGroup {
   title: string
-  clients: string[]
+  clients: IClient[]
 }
 
-const getGroupedClientsByPeriod = (clients: string[]): IClientGroup[] => {
+const getGroupedClientsByPeriod = (clients: IClient[]): IClientGroup[] => {
   const groupedClientsMapping: Record<EClientGroupSlugs, IClientGroup> = {
     [EClientGroupSlugs.TODAY]: { title: 'Hoje', clients: clients.slice(0, 2) },
     [EClientGroupSlugs.YESTERDAY]: { title: 'Ontem', clients: clients.slice(2, 6) },
@@ -31,21 +32,24 @@ const getGroupedClientsByPeriod = (clients: string[]): IClientGroup[] => {
   return Object.values(groupedClientsMapping)
 }
 
-export const ClientsList: FC<IProps> = ({ clients, className }) => {
+export const ClientsList: FC<IProps> = ({ className }) => {
+  const clients = useConversationStore((state) => state.clients)
+
   const clientGroups = getGroupedClientsByPeriod(clients)
   return (
     <div className={cn('tw-overflow-y-auto', className)}>
-      {clientGroups.map((clientGroup, index) => {
-        const isSelected = index === 3
-        return (
-          <ClientsListGroup
-            title={clientGroup.title}
-            clients={clientGroup.clients}
-            isFirstItem={index === 0}
-            className="tw-mr-6"
-          />
-        )
-      })}
+      {clientGroups
+        .filter((clientGroup) => clientGroup.clients.length)
+        .map((clientGroup, index) => {
+          return (
+            <ClientsListGroup
+              title={clientGroup.title}
+              clients={clientGroup.clients}
+              isFirstItem={index === 0}
+              className="tw-mr-6"
+            />
+          )
+        })}
     </div>
   )
 }
