@@ -38,3 +38,7 @@ export interface IConversationResponse {
 export interface IConversationsResponse {
   conversations: IConversationResponsePayload[]
 }
+
+export interface ICreateConversationResponse {
+  conversationId: string
+}

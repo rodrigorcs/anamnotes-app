@@ -1,14 +1,85 @@
-import axios from 'axios'
+import axios, { AxiosInstance, AxiosResponse } from 'axios'
+import {
+  IConversationResponse,
+  IConversationsResponse,
+  ICreateConversationResponse,
+} from '../models/contracts/Conversations'
+import { convertConversationContract } from './common'
 
-const BASE_URL = 'https://api.anamnotes.com'
+export class AnamnotesRestAPI {
+  private axiosClient: AxiosInstance
+  private Endpoints = Object.freeze({
+    CONVERSATIONS: '/v1/conversations',
+    CONVERSATION: (conversationId: string) => `/v1/conversations/${conversationId}`,
+    UPLOAD_URL: (conversationId: string, audioChunkId: string) =>
+      `/v1/conversations/${conversationId}/audioChunks/${audioChunkId}/uploadUrl`,
+  })
 
-export const Endpoints = {
-  CONVERSATIONS: '/v1/conversations',
-  CONVERSATION: (conversationId: string) => `/v1/conversations/${conversationId}`,
-  UPLOAD_URL: (conversationId: string, audioChunkId: string) =>
-    `/v1/conversations/${conversationId}/audioChunks/${audioChunkId}/uploadUrl`,
-} as const
+  constructor() {
+    this.axiosClient = axios.create({
+      baseURL: 'https://api.anamnotes.com',
+    })
+  }
 
-export const anamnotesAPI = axios.create({
-  baseURL: BASE_URL,
-})
+  public async getAllConversations() {
+    const response = (await this.axiosClient.get(
+      this.Endpoints.CONVERSATIONS,
+    )) as AxiosResponse<IConversationsResponse>
+
+    const conversations = response.data.conversations
+      .map((conversation) => convertConversationContract(conversation))
+      .sort((a, b) => b.createdAt.diff(a.createdAt))
+
+    return conversations
+  }
+
+  public async getConversation(id: string) {
+    const response = (await this.axiosClient.get(
+      this.Endpoints.CONVERSATION(id),
+    )) as AxiosResponse<IConversationResponse>
+
+    const conversation = convertConversationContract(response.data.conversation)
+    return conversation
+  }
+
+  public async createConversation({ clientName }: { clientName: string }) {
+    const response = (await this.axiosClient.post(this.Endpoints.CONVERSATIONS, {
+      client: {
+        name: clientName,
+      },
+    })) as AxiosResponse<ICreateConversationResponse>
+
+    return response.data.conversationId
+  }
+
+  public async getAudioChunkUploadURL({
+    conversationId,
+    audioChunkId,
+    isLastChunk,
+  }: {
+    conversationId: string
+    audioChunkId: string
+    isLastChunk: boolean
+  }) {
+    const response = await this.axiosClient.get(
+      this.Endpoints.UPLOAD_URL(conversationId, audioChunkId),
+      {
+        params: {
+          isLastChunk,
+        },
+      },
+    )
+
+    return response.data.signedUrl
+  }
+
+  public async uploadAudioChunk({
+    signedURL,
+    audioChunkBlob,
+  }: {
+    signedURL: string
+    audioChunkBlob: Blob
+  }) {
+    return axios.put(signedURL, audioChunkBlob)
+  }
+}

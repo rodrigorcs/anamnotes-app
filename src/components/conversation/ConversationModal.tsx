@@ -9,14 +9,14 @@ import {
 } from 'iconoir-react'
 import { cn } from '../../utils/className'
 import { theme } from '../../theme'
-import axios from 'axios'
 import { TSummarizationWebsocketMessage, EWebsocketMessageTypes } from '../../models/apis/websocket'
 import { Spinner } from '../common/Spinner'
 import { useConversationStore } from '../../stores/conversations'
-import { IConversationWithSummarizations } from '../../models/contracts/Conversations'
 import { ERecordingState, useRecordingStore } from '../../stores/recording'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import { AnamnotesRestAPI } from '../../apis/anamnotesRest'
+import { AnamnotesWebsocketAPI } from '../../apis/anamnotesWebsocket'
 dayjs.extend(duration)
 
 interface IStartConversationContentProps {
@@ -185,6 +185,9 @@ export const ConversationModal: FC = () => {
   const recordingState = useRecordingStore((state) => state.recordingState)
   const setRecordingState = useRecordingStore((state) => state.setRecordingState)
 
+  const anamnotesRestAPI = new AnamnotesRestAPI()
+  const anamnotesWebsocketAPI = new AnamnotesWebsocketAPI()
+
   useEffect(() => {
     recordingStateRef.current = recordingState
   }, [recordingState])
@@ -236,15 +239,19 @@ export const ConversationModal: FC = () => {
     const lastAudioChunkId = lastAudioChunkIdRef.current
     const conversationId = conversationIdRef.current
 
-    const currentChunkId = lastAudioChunkId ? lastAudioChunkId + 1 : 1
-    const presignedUploadUrlResponse = await axios.get(
-      `https://api.anamnotes.com/v1/conversations/${conversationId}/audioChunks/${currentChunkId}/uploadUrl`,
-      {
-        params: { isLastChunk },
-      },
-    )
+    if (!conversationId) throw new Error('Invalid conversationId')
 
-    await axios.put(presignedUploadUrlResponse.data.signedUrl, audioChunk)
+    const currentChunkId = lastAudioChunkId ? lastAudioChunkId + 1 : 1
+    const signedUploadURL = await anamnotesRestAPI.getAudioChunkUploadURL({
+      conversationId,
+      audioChunkId: currentChunkId.toString(),
+      isLastChunk,
+    })
+
+    await anamnotesRestAPI.uploadAudioChunk({
+      signedURL: signedUploadURL,
+      audioChunkBlob: audioChunk,
+    })
 
     lastAudioChunkIdRef.current = currentChunkId
   }
@@ -253,36 +260,16 @@ export const ConversationModal: FC = () => {
     await uploadAudioChunk(audioChunk, false)
   }
 
-  const getSummarizationMessage = async () =>
-    new Promise<TSummarizationWebsocketMessage['data']>((resolve, reject) => {
-      const wsURL = new URL('wss://ws.anamnotes.com')
-      wsURL.searchParams.append('conversationId', conversationIdRef.current ?? '')
-
-      const ws = new WebSocket(wsURL)
-      ws.onmessage = (event) => {
-        const message = JSON.parse(event.data) as TSummarizationWebsocketMessage
-        if (message.type !== EWebsocketMessageTypes.SUMMARIZATION) return
-        if (ws.readyState === ws.OPEN) ws.close()
-
-        if (message.success && message.data) {
-          resolve(message.data)
-        } else {
-          reject(message.error)
-        }
-      }
-      ws.onerror = (error) => {
-        reject(error)
-      }
-    })
-
   const sendLastAudioChunk = async (audioChunk: Blob) => {
     await uploadAudioChunk(audioChunk, true)
 
     try {
-      const conversation = (await getSummarizationMessage()) as IConversationWithSummarizations
-      // const validatedSections = parseSections(summarizationMessage?.content)
-      addConversation(conversation as IConversationWithSummarizations)
-      selectConversation(conversation.id)
+      if (!conversationIdRef.current) throw new Error('Invalid conversationId')
+      const conversationWithSummarization = await anamnotesWebsocketAPI.getSummarizationMessage(
+        conversationIdRef.current,
+      )
+      addConversation(conversationWithSummarization)
+      selectConversation(conversationWithSummarization.id)
       setRecordingState(ERecordingState.SUCCESS)
     } catch (error) {
       console.error(error)
@@ -291,15 +278,8 @@ export const ConversationModal: FC = () => {
   }
 
   const getConversationId = async (clientName: string) => {
-    const startConversationResponse = await axios.post(
-      'https://api.anamnotes.com/v1/conversations',
-      {
-        client: {
-          name: clientName,
-        },
-      },
-    )
-    conversationIdRef.current = startConversationResponse.data.conversationId
+    const conversationId = await anamnotesRestAPI.createConversation({ clientName })
+    conversationIdRef.current = conversationId
   }
 
   const startRecording = async (clientName: string) => {
