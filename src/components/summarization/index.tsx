@@ -5,6 +5,8 @@ import { useConversationStore } from '../../stores/conversations'
 import { ESectionSlugs, TContentSection } from '../../models/contracts/Summarization'
 import { Check as CheckIcon, Copy as CopyIcon } from 'iconoir-react'
 import { copyToClipboard } from '../../utils/clipboard'
+import { IConversationWithSummarizations } from '../../models/contracts/Conversations'
+import { SummarizationSkeleton } from '../skeletons/SummarizationSkeleton'
 
 const getSummarizationClipboardText = (
   contentSections: TContentSection[],
@@ -25,7 +27,9 @@ export type TCopiedSection = ESectionSlugs | 'all' | 'expanded' | null
 
 export const Summarization: FC = () => {
   const selectedConversation = useConversationStore((state) => state.selectedConversation)
-  const summarization = selectedConversation?.summarizations[0]
+  const summarization = (selectedConversation as IConversationWithSummarizations)
+    ?.summarizations?.[0]
+
   const [expandedSlugs, setExpandedSlugs] = useState<string[]>(
     summarization?.content.map((contentSection) => contentSection.slug) || [],
   )
@@ -60,64 +64,70 @@ export const Summarization: FC = () => {
 
   return (
     <div className="tw-flex tw-flex-col tw-w-[42rem] tw-py-10 tw-px-4">
-      <h1 className="tw-text-neutrals-800 tw-font-bold tw-text-3xl">Resumo da anamnese</h1>
-      <div className="tw-mt-8">
-        {summarization?.content.map((contentSection, index) => {
-          const isExpanded = expandedSlugs.includes(contentSection.slug)
-          return (
-            <SummarizationSection
-              key={`${summarization.id}#${contentSection.slug}`}
-              isExpanded={isExpanded}
-              toggleExpanded={handleToggleExpanded}
-              contentSection={contentSection}
-              copiedSection={copiedSection}
-              setCopiedSection={setCopiedSection}
-              isFirstItem={index === 0}
+      {!summarization ? (
+        <SummarizationSkeleton />
+      ) : (
+        <>
+          <h1 className="tw-text-neutrals-800 tw-font-bold tw-text-3xl">Resumo da anamnese</h1>
+          <div className="tw-mt-8">
+            {summarization?.content.map((contentSection, index) => {
+              const isExpanded = expandedSlugs.includes(contentSection.slug)
+              return (
+                <SummarizationSection
+                  key={`${summarization.id}#${contentSection.slug}`}
+                  isExpanded={isExpanded}
+                  toggleExpanded={handleToggleExpanded}
+                  contentSection={contentSection}
+                  copiedSection={copiedSection}
+                  setCopiedSection={setCopiedSection}
+                  isFirstItem={index === 0}
+                />
+              )
+            })}
+          </div>
+          <div className="tw-flex tw-mt-8">
+            <Button
+              text="Copiar tudo"
+              IconRight={
+                <>
+                  {copiedSection === 'all' ? (
+                    <CheckIcon className="tw-text-feedback-positive-300 group-hover:tw-text-feedback-positive-500" />
+                  ) : (
+                    <CopyIcon />
+                  )}
+                </>
+              }
+              iconClassName={copiedSection === 'all' && 'tw-text-feedback-positive-300'}
+              variant="secondary"
+              rounded
+              className="tw-font-medium"
+              onClick={() => {
+                const content = getSummarizationClipboardText(summarization?.content ?? [], null)
+                copyToClipboard(content)
+                setCopiedSection('all')
+              }}
             />
-          )
-        })}
-      </div>
-      <div className="tw-flex tw-mt-8">
-        <Button
-          text="Copiar tudo"
-          IconRight={
-            <>
-              {copiedSection === 'all' ? (
-                <CheckIcon className="tw-text-feedback-positive-300 group-hover:tw-text-feedback-positive-500" />
-              ) : (
-                <CopyIcon />
-              )}
-            </>
-          }
-          iconClassName={copiedSection === 'all' && 'tw-text-feedback-positive-300'}
-          variant="secondary"
-          rounded
-          className="tw-font-medium"
-          onClick={() => {
-            const content = getSummarizationClipboardText(summarization?.content ?? [], null)
-            copyToClipboard(content)
-            setCopiedSection('all')
-          }}
-        />
-        <Button
-          text="Copiar seções expandidas"
-          variant="tertiary"
-          className="tw-ml-2 tw-font-medium"
-          IconRight={
-            copiedSection === 'expanded' && (
-              <CheckIcon className="tw-text-feedback-positive-300 group-hover:tw-text-feedback-positive-500" />
-            )
-          }
-          onClick={() => {
-            const content = getSummarizationClipboardText(
-              summarization?.content ?? [],
-              expandedSlugs,
-            )
-            copyToClipboard(content)
-            setCopiedSection('expanded')
-          }}
-        />
-      </div>
+            <Button
+              text="Copiar seções expandidas"
+              variant="tertiary"
+              className="tw-ml-2 tw-font-medium"
+              IconRight={
+                copiedSection === 'expanded' && (
+                  <CheckIcon className="tw-text-feedback-positive-300 group-hover:tw-text-feedback-positive-500" />
+                )
+              }
+              onClick={() => {
+                const content = getSummarizationClipboardText(
+                  summarization?.content ?? [],
+                  expandedSlugs,
+                )
+                copyToClipboard(content)
+                setCopiedSection('expanded')
+              }}
+            />
+          </div>
+        </>
+      )}
     </div>
   )
 }

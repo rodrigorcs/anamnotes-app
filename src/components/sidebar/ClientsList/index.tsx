@@ -5,6 +5,7 @@ import { ClientsListGroup } from './ClientsListGroup'
 import { useConversationStore } from '../../../stores/conversations'
 import { IClient } from '../../../models/contracts/Conversations'
 import dayjs from 'dayjs'
+import { ClientsListSkeleton } from '../../skeletons/ClientsListSkeleton'
 
 interface IProps {
   searchQuery: string
@@ -72,20 +73,26 @@ export const ClientsList: FC<IProps> = ({ searchQuery, className }) => {
 
   const clientGroups = getGroupedClientsByPeriod(filteredClients)
   return (
-    <div className={cn('tw-overflow-y-auto', className)}>
-      {clientGroups
-        .filter((clientGroup) => clientGroup.clients.length)
-        .map((clientGroup, index) => {
-          return (
-            <ClientsListGroup
-              key={clientGroup.slug}
-              title={clientGroup.title}
-              clients={clientGroup.clients}
-              isFirstItem={index === 0}
-              className="tw-mr-6"
-            />
-          )
-        })}
-    </div>
+    <>
+      {!clients ? (
+        <ClientsListSkeleton />
+      ) : (
+        <div className={cn('tw-overflow-y-auto', className)}>
+          {clientGroups
+            .filter((clientGroup) => clientGroup.clients.length)
+            .map((clientGroup, index) => {
+              return (
+                <ClientsListGroup
+                  key={clientGroup.slug}
+                  title={clientGroup.title}
+                  clients={clientGroup.clients}
+                  isFirstItem={index === 0}
+                  className="tw-mr-6"
+                />
+              )
+            })}
+        </div>
+      )}
+    </>
   )
 }

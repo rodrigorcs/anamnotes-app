@@ -4,7 +4,10 @@ import {
   IConversationsResponse,
   ICreateConversationResponse,
 } from '../models/contracts/Conversations'
-import { convertConversationContract } from './common'
+import {
+  convertConversationContract,
+  convertConversationWithSummarizationsContract,
+} from './common'
 
 export class AnamnotesRestAPI {
   private axiosClient: AxiosInstance
@@ -38,7 +41,7 @@ export class AnamnotesRestAPI {
       this.Endpoints.CONVERSATION(id),
     )) as AxiosResponse<IConversationResponse>
 
-    const conversation = convertConversationContract(response.data.conversation)
+    const conversation = convertConversationWithSummarizationsContract(response.data.conversation)
     return conversation
   }
 

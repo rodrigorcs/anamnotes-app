@@ -1,5 +1,10 @@
 import { create } from 'zustand'
-import { IClient, IConversation } from '../models/contracts/Conversations'
+import {
+  IClient,
+  IConversation,
+  IConversationWithSummarizations,
+} from '../models/contracts/Conversations'
+import { AnamnotesRestAPI } from '../apis/anamnotesRest'
 
 const extractClientsWithLastConversationDate = (conversations: IConversation[]): IClient[] => {
   const clientMap = new Map<string, IClient>()
@@ -23,10 +28,17 @@ const extractClientsWithLastConversationDate = (conversations: IConversation[]):
   return Array.from(clientMap.values())
 }
 
+const getConversationWithSummarization = async () => {
+  const { selectedConversation } = useConversationStore.getState()
+  if (!selectedConversation) return
+  const anamnotesAPI = new AnamnotesRestAPI()
+  return anamnotesAPI.getConversation(selectedConversation.id)
+}
+
 interface IConversationStore {
   conversations: IConversation[]
   clients: IClient[]
-  selectedConversation: IConversation | null
+  selectedConversation: IConversationWithSummarizations | null
   updateConversations: (conversations: IConversation[]) => void
   selectConversation: (conversationId: string) => void
   selectLatestConversationByClientId: (clientId: string) => void
@@ -40,16 +52,34 @@ export const useConversationStore = create<IConversationStore>((set) => ({
   selectedConversation: null,
   updateConversations: (conversations: IConversation[]) =>
     set(() => ({ conversations, clients: extractClientsWithLastConversationDate(conversations) })),
-  selectConversation: (conversationId: string) =>
+  selectConversation: async (conversationId: string) => {
     set((state) => ({
       selectedConversation:
         state.conversations.find((conversation) => conversation.id === conversationId) ?? null,
-    })),
-  selectLatestConversationByClientId: (clientId: string) =>
+    }))
+
+    const conversationWithSummarization = await getConversationWithSummarization()
+
+    set(() => {
+      return {
+        selectedConversation: conversationWithSummarization,
+      }
+    })
+  },
+  selectLatestConversationByClientId: async (clientId: string) => {
     set((state) => ({
       selectedConversation:
         state.conversations.find((conversation) => conversation.client.id === clientId) ?? null,
-    })),
+    }))
+
+    const conversationWithSummarization = await getConversationWithSummarization()
+
+    set(() => {
+      return {
+        selectedConversation: conversationWithSummarization,
+      }
+    })
+  },
   clearConversationSelection: () => set({ selectedConversation: null }),
   addConversation: (conversation: IConversation) =>
     set((state) => {

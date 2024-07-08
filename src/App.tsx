@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import '../styles.css'
 import { Sidebar } from './components/sidebar'
 import { Topbar } from './components/topbar'
@@ -10,11 +10,7 @@ import { useConversationStore } from './stores/conversations'
 import { Summarization } from './components/summarization'
 import { AnamnotesRestAPI } from './apis/anamnotesRest'
 
-export enum EModals {
-  RESULTS = 'results',
-}
-
-function App() {
+export const App: FC = () => {
   const selectedConversation = useConversationStore((state) => state.selectedConversation)
   const updateConversations = useConversationStore((state) => state.updateConversations)
 
@@ -41,5 +37,3 @@ function App() {
     </RootContainer>
   )
 }
-
-export default App
