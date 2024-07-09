@@ -17,7 +17,7 @@ const getStylesByVariant = (variant: TButtonVariant): IStyles => {
   const stylesByVariant: Record<TButtonVariant, IStyles> = Object.freeze({
     primary: {
       buttonClassNames:
-        'tw-px-6 tw-bg-brand-500 hover:tw-bg-brand-700 tw-shadow-[0_4px_8px_0px_rgba(0,0,0,0.15)]',
+        'tw-px-6 tw-bg-brand-500 hover:tw-bg-brand-700 disabled:tw-bg-brand-300 tw-shadow-[0_4px_8px_0px_rgba(0,0,0,0.15)]',
       textClassNames: 'tw-text-neutrals-white',
       iconProps: {
         color: theme.colors['neutrals-white'],
@@ -56,6 +56,7 @@ interface IProps {
   className?: ClassNameValue
   textClassName?: ClassNameValue
   iconClassName?: ClassNameValue
+  isDisabled?: boolean
   onClick?: () => void
 }
 
@@ -69,6 +70,7 @@ export const Button: FC<IProps> = ({
   className,
   textClassName,
   iconClassName,
+  isDisabled,
   onClick,
 }) => {
   const variantStyles = getStylesByVariant(variant)
@@ -83,6 +85,7 @@ export const Button: FC<IProps> = ({
         className,
       )}
       onClick={onClick}
+      disabled={isDisabled}
     >
       <IconoirProvider
         iconProps={{

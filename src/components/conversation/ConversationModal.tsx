@@ -46,6 +46,7 @@ const StartConversationContent: FC<IStartConversationContentProps> = ({ startRec
           setClientName(clientNameInput)
           startRecording(clientNameInput)
         }}
+        isDisabled={clientNameInput.length < 3}
       />
     </div>
   )
