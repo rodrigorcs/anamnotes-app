@@ -7,12 +7,12 @@ export const SummarizationSkeleton: FC = () => {
     <>
       <SkeletonRectangle width={20} height={2.25} />
       <div className="tw-mt-8">
-        {Array(4)
+        {Array(3)
           .fill('skeleton-section-title')
           .map((_, index) => (
             <div className={cn(index > 0 && 'tw-mt-8')}>
               <SkeletonRectangle key={index} width={randomInInterval(12, 24)} height={1.5} />
-              {Array(randomInInterval(3, 7))
+              {Array(randomInInterval(2, 5))
                 .fill('skeleton-section-content')
                 .map((_, index) => (
                   <SkeletonRectangle

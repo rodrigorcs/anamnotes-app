@@ -12,8 +12,8 @@ export const ClientsListSkeleton: FC = () => {
             <>
               <SkeletonRectangle
                 key={index}
-                width={4}
-                height={0.75}
+                width={randomInInterval(4, 8)}
+                height={0.825}
                 className={cn(index > 0 && 'tw-mt-5')}
               />
               <div className="tw-mt-5">

@@ -74,7 +74,7 @@ export const ClientsList: FC<IProps> = ({ searchQuery, className }) => {
   const clientGroups = getGroupedClientsByPeriod(filteredClients)
   return (
     <>
-      {!clients ? (
+      {!clients.length ? (
         <ClientsListSkeleton />
       ) : (
         <div className={cn('tw-overflow-y-auto', className)}>
