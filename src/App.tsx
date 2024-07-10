@@ -9,6 +9,8 @@ import { Conversation } from './components/conversation'
 import { useConversationStore } from './stores/conversations'
 import { Summarization } from './components/summarization'
 import { AnamnotesRestAPI } from './apis/anamnotesRest'
+import { Routes, Route, BrowserRouter } from 'react-router-dom'
+import { LoginPage } from './pages/LoginPage'
 
 export const App: FC = () => {
   const selectedConversation = useConversationStore((state) => state.selectedConversation)
@@ -27,13 +29,25 @@ export const App: FC = () => {
 
   return (
     <RootContainer>
-      <Sidebar />
-      <MainContainer>
-        <Topbar />
-        <ContentContainer>
-          {selectedConversation ? <Summarization /> : <Conversation />}
-        </ContentContainer>
-      </MainContainer>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Sidebar />
+                <MainContainer>
+                  <Topbar />
+                  <ContentContainer>
+                    {selectedConversation ? <Summarization /> : <Conversation />}
+                  </ContentContainer>
+                </MainContainer>
+              </>
+            }
+          />
+          <Route path="login" element={<LoginPage />} />
+        </Routes>
+      </BrowserRouter>
     </RootContainer>
   )
 }

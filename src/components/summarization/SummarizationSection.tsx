@@ -28,7 +28,7 @@ export const getTitleFromSlug = (slug: string) => {
     hipotesesDiagnosticas: 'Hipóteses diagnósticas',
     examesComplementares: 'Exames complementares',
     conduta: 'Conduta',
-    prognostico: 'Progóstico',
+    prognostico: 'Prognóstico',
     sequelas: 'Sequelas',
   } as const
 
