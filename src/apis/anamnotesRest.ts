@@ -19,8 +19,10 @@ export class AnamnotesRestAPI {
   })
 
   constructor() {
+    const { VITE_ANAMNOTES_REST_BASE_URL } = import.meta.env
+
     this.axiosClient = axios.create({
-      baseURL: 'https://api.anamnotes.com',
+      baseURL: VITE_ANAMNOTES_REST_BASE_URL,
     })
   }
 

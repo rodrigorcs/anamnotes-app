@@ -10,7 +10,9 @@ export class AnamnotesWebsocketAPI {
   private baseURL: string
 
   constructor() {
-    this.baseURL = 'wss://ws.anamnotes.com'
+    const { VITE_ANAMNOTES_WEBSOCKET_BASE_URL } = import.meta.env
+
+    this.baseURL = VITE_ANAMNOTES_WEBSOCKET_BASE_URL
   }
 
   private createWSConnection(conversationId: string) {
