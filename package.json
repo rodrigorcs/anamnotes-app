@@ -24,6 +24,7 @@
     "openai": "^4.40.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.52.1",
     "react-router-dom": "^6.24.1",
     "react-speech-recognition": "^3.10.0",
     "regenerator-runtime": "^0.14.1",

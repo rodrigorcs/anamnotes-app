@@ -3,8 +3,12 @@ import { ChangeEvent, FC, ReactNode } from 'react'
 import { ClassNameValue } from 'tailwind-merge'
 import { theme } from '../../theme'
 import { cn } from '../../utils/className'
+import { FieldValues, UseFormRegister } from 'react-hook-form'
 
 interface IProps {
+  id: string
+  register?: UseFormRegister<FieldValues>
+  title?: string
   value?: string
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void
   placeholder?: string
@@ -14,6 +18,9 @@ interface IProps {
 }
 
 export const Input: FC<IProps> = ({
+  id,
+  register,
+  title,
   value,
   onChange,
   placeholder,
@@ -22,29 +29,38 @@ export const Input: FC<IProps> = ({
   className,
 }) => {
   return (
-    <div
-      className={cn(
-        'tw-flex tw-bg-neutrals-white tw-border tw-border-neutrals-200 tw-rounded-lg tw-h-10 tw-items-center tw-px-3 focus-within:tw-border-2 focus-within:tw-border-brand-500',
-        className,
+    <div className={cn(className)}>
+      {title && (
+        <label className="tw-text-neutrals-700 tw-text-sm" htmlFor={id}>
+          {title}
+        </label>
       )}
-    >
-      <IconoirProvider
-        iconProps={{
-          color: theme.colors['neutrals-400'],
-          strokeWidth: 2,
-          width: '1.125em',
-          height: '1.125em',
-        }}
+      <div
+        className={cn(
+          'tw-flex tw-bg-neutrals-white tw-border tw-border-neutrals-200 tw-rounded tw-h-10 tw-items-center tw-px-3 focus-within:tw-border-2 focus-within:tw-border-brand-500',
+          title && 'tw-mt-1',
+        )}
       >
-        {IconLeft && IconLeft}
-        <input
-          className={cn('tw-flex-1 tw-outline-none', IconLeft && 'tw-ml-2 ')}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-        />
-        {IconRight && IconRight}
-      </IconoirProvider>
+        <IconoirProvider
+          iconProps={{
+            color: theme.colors['neutrals-400'],
+            strokeWidth: 2,
+            width: '1.125em',
+            height: '1.125em',
+          }}
+        >
+          {IconLeft && IconLeft}
+          <input
+            {...(register && { ...register(id) })}
+            {...(value && { value })}
+            {...(onChange && { onChange })}
+            id={id}
+            className={cn('tw-flex-1 tw-outline-none tw-text-sm', IconLeft && 'tw-ml-2 ')}
+            placeholder={placeholder}
+          />
+          {IconRight && IconRight}
+        </IconoirProvider>
+      </div>
     </div>
   )
 }

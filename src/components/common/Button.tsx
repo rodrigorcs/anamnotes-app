@@ -1,5 +1,5 @@
 import { IconoirProvider } from 'iconoir-react'
-import { FC, ReactNode } from 'react'
+import { ButtonHTMLAttributes, FC, ReactNode } from 'react'
 import { theme } from '../../theme'
 import { cn } from '../../utils/className'
 import { ClassNameValue } from 'tailwind-merge'
@@ -58,6 +58,7 @@ interface IProps {
   iconClassName?: ClassNameValue
   isDisabled?: boolean
   onClick?: () => void
+  type?: ButtonHTMLAttributes<HTMLButtonElement>['type']
 }
 
 export const Button: FC<IProps> = ({
@@ -72,6 +73,7 @@ export const Button: FC<IProps> = ({
   iconClassName,
   isDisabled,
   onClick,
+  type,
 }) => {
   const variantStyles = getStylesByVariant(variant)
 
@@ -86,6 +88,7 @@ export const Button: FC<IProps> = ({
       )}
       onClick={onClick}
       disabled={isDisabled}
+      type={type}
     >
       <IconoirProvider
         iconProps={{
