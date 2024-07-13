@@ -5,6 +5,8 @@ import {
   IConversationWithSummarizationResponsePayload,
   IConversationWithSummarizations,
 } from '../models/contracts/Conversations'
+import { AxiosInstance } from 'axios'
+import { fetchAuthSession } from 'aws-amplify/auth'
 
 export const convertConversationContract = (
   conversation: IConversationResponsePayload,
@@ -31,4 +33,21 @@ export const convertConversationWithSummarizationsContract = (
       }))
       .sort((a, b) => b.createdAt.diff(a.createdAt)),
   }
+}
+
+export const getAuthTokenFromCognitoSession = async () => {
+  const authSession = await fetchAuthSession()
+  return authSession.tokens?.idToken?.toString()
+}
+
+export const setCognitoInterceptor = (axiosClient: AxiosInstance) => {
+  axiosClient.interceptors.request.use(async (requestConfig) => {
+    const authToken = await getAuthTokenFromCognitoSession()
+
+    if (authToken) {
+      requestConfig.headers.Authorization = `Bearer ${authToken}`
+    }
+
+    return requestConfig
+  })
 }

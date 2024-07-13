@@ -7,6 +7,7 @@ import {
 import {
   convertConversationContract,
   convertConversationWithSummarizationsContract,
+  setCognitoInterceptor,
 } from './common'
 
 export class AnamnotesRestAPI {
@@ -24,6 +25,7 @@ export class AnamnotesRestAPI {
     this.axiosClient = axios.create({
       baseURL: VITE_ANAMNOTES_REST_BASE_URL,
     })
+    setCognitoInterceptor(this.axiosClient)
   }
 
   public async getAllConversations() {
