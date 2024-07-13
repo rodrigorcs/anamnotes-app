@@ -4,10 +4,11 @@ import { ClassNameValue } from 'tailwind-merge'
 import { theme } from '../../theme'
 import { cn } from '../../utils/className'
 import { FieldValues, UseFormRegister } from 'react-hook-form'
+import { convertCamelCaseToKebabCase } from '../../utils/case'
 
-interface IProps {
-  id: string
-  register?: UseFormRegister<FieldValues>
+interface IProps<T extends FieldValues = FieldValues> {
+  id?: string
+  register?: UseFormRegister<T>
   title?: string
   value?: string
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void
@@ -17,7 +18,7 @@ interface IProps {
   className?: ClassNameValue
 }
 
-export const Input: FC<IProps> = ({
+export const Input: FC<IProps<any>> = ({
   id,
   register,
   title,
@@ -51,10 +52,10 @@ export const Input: FC<IProps> = ({
         >
           {IconLeft && IconLeft}
           <input
-            {...(register && { ...register(id) })}
+            {...(register && id && { ...register(id) })}
             {...(value && { value })}
             {...(onChange && { onChange })}
-            id={id}
+            {...(id && { id: convertCamelCaseToKebabCase(id) })}
             className={cn('tw-flex-1 tw-outline-none tw-text-sm', IconLeft && 'tw-ml-2 ')}
             placeholder={placeholder}
           />
