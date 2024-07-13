@@ -8,10 +8,9 @@ export const ClientsListSkeleton: FC = () => {
       <div className="tw-mt-8 tw-px-6">
         {Array(3)
           .fill('skeleton-section-group')
-          .map((_, index) => (
-            <>
+          .map((listSlug, index) => (
+            <div key={`${listSlug}-${index}`}>
               <SkeletonRectangle
-                key={index}
                 width={randomInInterval(4, 8)}
                 height={0.825}
                 className={cn(index > 0 && 'tw-mt-5')}
@@ -19,11 +18,13 @@ export const ClientsListSkeleton: FC = () => {
               <div className="tw-mt-5">
                 {Array(randomInInterval(3, 5))
                   .fill('skeleton-section-client')
-                  .map((_, index) => (
-                    <div className={cn('tw-flex tw-items-center', index > 0 && 'tw-mt-3')}>
-                      <SkeletonRectangle key={index} width={1.75} height={1.75} rounded />
+                  .map((listSlug, index) => (
+                    <div
+                      key={`${listSlug}-${index}`}
+                      className={cn('tw-flex tw-items-center', index > 0 && 'tw-mt-3')}
+                    >
+                      <SkeletonRectangle width={1.75} height={1.75} rounded />
                       <SkeletonRectangle
-                        key={index}
                         width={randomInInterval(6, 11)}
                         height={1.125}
                         className={cn('tw-ml-2')}
@@ -31,7 +32,7 @@ export const ClientsListSkeleton: FC = () => {
                     </div>
                   ))}
               </div>
-            </>
+            </div>
           ))}
       </div>
     </>
