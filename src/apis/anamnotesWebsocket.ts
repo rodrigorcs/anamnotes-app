@@ -1,5 +1,5 @@
 import { IConversationWithSummarizations } from '../models/contracts/Conversations'
-import { convertConversationContract } from './common'
+import { convertConversationContract, getAuthTokenFromCognitoSession } from './common'
 import {
   EWebsocketMessageTypes,
   IWebsocketMessage,
@@ -15,17 +15,27 @@ export class AnamnotesWebsocketAPI {
     this.baseURL = VITE_ANAMNOTES_WEBSOCKET_BASE_URL
   }
 
-  private createWSConnection(conversationId: string) {
+  private createWSConnection({
+    conversationId,
+    authToken,
+  }: {
+    conversationId: string
+    authToken?: string
+  }) {
     const wsURL = new URL(this.baseURL)
+
     wsURL.searchParams.append('conversationId', conversationId)
+    if (authToken) {
+      wsURL.searchParams.append('idToken', authToken)
+    }
 
     return new WebSocket(wsURL)
   }
 
   public async getSummarizationMessage(conversationId: string) {
-    return new Promise<IConversationWithSummarizations>((resolve, reject) => {
-      const wsConnection = this.createWSConnection(conversationId)
-
+    return new Promise<IConversationWithSummarizations>(async (resolve, reject) => {
+      const authToken = await getAuthTokenFromCognitoSession()
+      const wsConnection = this.createWSConnection({ conversationId, authToken })
       wsConnection.onmessage = (event) => {
         const message = JSON.parse(event.data) as IWebsocketMessage<unknown>
         if (message.type !== EWebsocketMessageTypes.SUMMARIZATION) return
@@ -41,8 +51,9 @@ export class AnamnotesWebsocketAPI {
         }
       }
 
-      wsConnection.onerror = (error) => {
-        reject(error)
+      wsConnection.onerror = (event) => {
+        console.error(event)
+        reject(event)
       }
     })
   }
