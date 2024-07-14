@@ -20,7 +20,7 @@ const getUserDataFromCognitoSession = (cognitoSession: AuthSession): TAuthentica
 
   try {
     return parseAuthenticatedUser(userData)
-  } catch {
+  } catch (error) {
     return null
   }
 }

@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { Navigate, createBrowserRouter } from 'react-router-dom'
 import { RootContainer } from './components/common/containers/RootContainer'
 import { AuthContainer } from './components/auth/AuthContainer'
 import { SignInContent } from './components/auth/SignIn'
@@ -14,10 +14,12 @@ export const router = createBrowserRouter([
     path: '/',
     element: <RootContainer />,
     children: [
+      { index: true, element: <Navigate to="auth" replace /> },
       {
         path: 'auth',
         element: <AuthContainer />,
         children: [
+          { index: true, element: <Navigate to="sign-in" replace /> },
           { path: 'sign-in', element: <SignInContent /> },
           {
             path: 'sign-up',
@@ -30,10 +32,12 @@ export const router = createBrowserRouter([
         path: 'app',
         element: <AuthorizedContainer />,
         children: [
+          { index: true, element: <Navigate to="conversations" replace /> },
           {
             path: 'conversations',
             element: <ConversationContainer />,
             children: [
+              { index: true, element: <Navigate to="new" replace /> },
               { path: 'new', element: <Conversation /> },
               { path: ':conversationId', element: <Summarization /> },
             ],
