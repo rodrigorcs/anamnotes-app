@@ -25,17 +25,16 @@ export class AnamnotesWebsocketAPI {
     const wsURL = new URL(this.baseURL)
 
     wsURL.searchParams.append('conversationId', conversationId)
-    if (authToken) {
-      wsURL.searchParams.append('idToken', authToken)
-    }
+    if (authToken) wsURL.searchParams.append('idToken', authToken)
 
     return new WebSocket(wsURL)
   }
 
   public async getSummarizationMessage(conversationId: string) {
+    const authToken = await getAuthTokenFromCognitoSession()
+    const wsConnection = this.createWSConnection({ conversationId, authToken })
+
     return new Promise<IConversationWithSummarizations>(async (resolve, reject) => {
-      const authToken = await getAuthTokenFromCognitoSession()
-      const wsConnection = this.createWSConnection({ conversationId, authToken })
       wsConnection.onmessage = (event) => {
         const message = JSON.parse(event.data) as IWebsocketMessage<unknown>
         if (message.type !== EWebsocketMessageTypes.SUMMARIZATION) return
