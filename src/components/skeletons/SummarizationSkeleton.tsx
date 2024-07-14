@@ -9,14 +9,14 @@ export const SummarizationSkeleton: FC = () => {
       <div className="tw-mt-8">
         {Array(3)
           .fill('skeleton-section-title')
-          .map((_, index) => (
-            <div className={cn(index > 0 && 'tw-mt-8')}>
+          .map((sectionSlug, index) => (
+            <div key={`${sectionSlug}-${index}`} className={cn(index > 0 && 'tw-mt-8')}>
               <SkeletonRectangle key={index} width={randomInInterval(12, 24)} height={1.5} />
               {Array(randomInInterval(2, 5))
                 .fill('skeleton-section-content')
-                .map((_, index) => (
+                .map((sectionSlug, index) => (
                   <SkeletonRectangle
-                    key={index}
+                    key={`${sectionSlug}-${index}`}
                     width={randomInInterval(32, 38)}
                     height={1}
                     className={cn(index > 0 ? 'tw-mt-1' : 'tw-mt-5')}

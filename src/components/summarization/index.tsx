@@ -7,6 +7,7 @@ import { Check as CheckIcon, Copy as CopyIcon } from 'iconoir-react'
 import { copyToClipboard } from '../../utils/clipboard'
 import { IConversationWithSummarizations } from '../../models/contracts/Conversations'
 import { SummarizationSkeleton } from '../skeletons/SummarizationSkeleton'
+import { useParams } from 'react-router-dom'
 
 const getSummarizationClipboardText = (
   contentSections: TContentSection[],
@@ -26,7 +27,13 @@ const getSummarizationClipboardText = (
 export type TCopiedSection = ESectionSlugs | 'all' | 'expanded' | null
 
 export const Summarization: FC = () => {
+  const { conversationId } = useParams()
+  console.log({ conversationId })
+  const selectConversation = useConversationStore((state) => state.selectConversation)
   const selectedConversation = useConversationStore((state) => state.selectedConversation)
+
+  console.log({ selectedConversation })
+
   const summarization = (selectedConversation as IConversationWithSummarizations)
     ?.summarizations?.[0]
 
@@ -43,6 +50,10 @@ export const Summarization: FC = () => {
       setExpandedSlugs([...expandedSlugs, slug])
     }
   }
+
+  useEffect(() => {
+    if (conversationId) selectConversation(conversationId)
+  }, [conversationId])
 
   useEffect(() => {
     if (copiedSection) {

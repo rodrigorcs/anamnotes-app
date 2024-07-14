@@ -30,6 +30,7 @@ export const Avatar: FC<IProps> = ({ fullName, className }) => {
 
   const firstChar: string = fullName[0]
   const lastChar: string = lastName?.[0] ?? ''
+  const initials = `${firstChar}${lastChar}`.toUpperCase()
 
   return (
     <div
@@ -46,7 +47,9 @@ export const Avatar: FC<IProps> = ({ fullName, className }) => {
         style={{
           color: stringToHslColor({ name: fullName, saturation: 30, lightness: 45 }),
         }}
-      >{`${firstChar}${lastChar}`}</span>
+      >
+        {initials}
+      </span>
     </div>
   )
 }

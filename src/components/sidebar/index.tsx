@@ -5,8 +5,10 @@ import { ClientsList } from './ClientsList'
 import { Search as SearchIcon, Plus as PlusIcon } from 'iconoir-react'
 import { useConversationStore } from '../../stores/conversations'
 import { useRecordingStore } from '../../stores/recording'
+import { useNavigate } from 'react-router-dom'
 
 export const Sidebar: FC = () => {
+  const navigate = useNavigate()
   const clearConversationSelection = useConversationStore(
     (state) => state.clearConversationSelection,
   )
@@ -35,6 +37,7 @@ export const Sidebar: FC = () => {
             onClick={() => {
               clearConversationSelection()
               clearRecordingState()
+              navigate('conversations/new', { relative: 'route' })
             }}
           />
         </div>

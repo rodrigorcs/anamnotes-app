@@ -25,7 +25,7 @@ dayjs.updateLocale('en', {
   },
 })
 
-export const Topbar: FC = () => {
+export const ConversationHeader: FC = () => {
   const conversations = useConversationStore((state) => state.conversations)
   const selectedConversation = useConversationStore((state) => state.selectedConversation)
   const conversationsFromClient = selectedConversation

@@ -4,6 +4,7 @@ import { cn } from '../../../utils/className'
 import { Avatar } from '../../common/Avatar'
 import { IClient } from '../../../models/contracts/Conversations'
 import { useConversationStore } from '../../../stores/conversations'
+import { useNavigate, useParams } from 'react-router-dom'
 
 interface IProps {
   client: IClient
@@ -12,12 +13,19 @@ interface IProps {
 }
 
 export const ClientsListItem: FC<IProps> = ({ client, isFirstItem, className }) => {
+  const navigate = useNavigate()
+
+  const conversations = useConversationStore((state) => state.conversations)
   const selectedConversation = useConversationStore((state) => state.selectedConversation)
   const isSelected = client.id === selectedConversation?.client.id
 
-  const selectLatestConversationByClientId = useConversationStore(
-    (state) => state.selectLatestConversationByClientId,
-  )
+  const handleSelectConversation = () => {
+    const latestConversationFromClient = conversations.find(
+      (conversation) => conversation.client.id === client.id,
+    )
+
+    navigate(`conversations/${latestConversationFromClient?.id}`)
+  }
 
   return (
     <div
@@ -27,7 +35,7 @@ export const ClientsListItem: FC<IProps> = ({ client, isFirstItem, className }) 
         !isFirstItem && 'tw-mt-1',
         className,
       )}
-      onClick={() => selectLatestConversationByClientId(client.id)}
+      onClick={handleSelectConversation}
     >
       <Avatar fullName={client.name} />
       <p className="tw-ml-2 tw-text-neutrals-700 tw-text-sm">{client.name}</p>

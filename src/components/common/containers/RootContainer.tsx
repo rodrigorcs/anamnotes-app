@@ -1,13 +1,22 @@
-import { FC, ReactNode } from 'react'
+import { FC, useEffect } from 'react'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../../../stores/auth'
 
-interface IProps {
-  children: ReactNode
-}
+export const RootContainer: FC = () => {
+  const navigate = useNavigate()
+  const { pathname: path } = useLocation()
+  const rootPath = path.split('/')[1]
 
-export const RootContainer: FC<IProps> = ({ children }) => {
+  const user = useAuthStore((state) => state.user)
+
+  // useEffect(() => {
+  //   if (rootPath === 'app' && !user) return navigate('/auth')
+  //   if (rootPath === 'auth' && user) return navigate('/app')
+  // }, [user])
+
   return (
     <div id="anamnotes-app-container" className="tw-flex">
-      {children}
+      <Outlet />
     </div>
   )
 }
