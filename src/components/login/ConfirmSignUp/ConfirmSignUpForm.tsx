@@ -3,8 +3,8 @@ import { Input } from '../../common/Input'
 import { confirmSignUp } from 'aws-amplify/auth'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Button } from '../../common/Button'
-import { useAuthStore } from '../../../stores/auth'
 import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../../../stores/auth'
 
 interface IFormFields {
   otp: string
@@ -18,13 +18,13 @@ const FormFields: { [key in FormFieldKeys]: key } = {
 export const ConfirmSignUpForm: FC = () => {
   const navigate = useNavigate()
   const formMethods = useForm<IFormFields>()
-  const emailAddress = useAuthStore((state) => state.emailAddress)
+  const loginData = useAuthStore((state) => state.loginData)
 
   const handleConfirmSignUp = async ({ otp }: IFormFields) => {
-    if (!emailAddress) throw new Error('Email address is required')
+    if (!loginData) throw new Error('Login data not found')
 
     const { isSignUpComplete } = await confirmSignUp({
-      username: emailAddress,
+      username: loginData.emailAddress,
       confirmationCode: otp,
     })
 

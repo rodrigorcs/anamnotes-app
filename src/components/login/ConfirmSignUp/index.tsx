@@ -4,14 +4,13 @@ import { Button } from '../../common/Button'
 import { NavArrowLeft as BackIcon } from 'iconoir-react'
 import { useAuthStore } from '../../../stores/auth'
 import { useNavigate } from 'react-router-dom'
+import { getFirstNameFromFullName } from '../../../utils/names'
 
 export const ConfirmSignUpContent: FC = () => {
   const navigate = useNavigate()
 
-  const emailAddress = useAuthStore((state) => state.emailAddress)
-  const fullName = useAuthStore((state) => state.fullName)
-
-  const [firstName] = fullName?.split(' ') ?? []
+  const loginData = useAuthStore((state) => state.loginData)
+  const firstName = getFirstNameFromFullName(loginData?.fullName)
 
   return (
     <div className="tw-flex-1 tw-flex tw-flex-col tw-justify-center tw-mb-14">
@@ -29,7 +28,7 @@ export const ConfirmSignUpContent: FC = () => {
       </h1>
       <p className="tw-mt-2 tw-text-sm tw-text-neutrals-600">
         Enviamos um código de verificação para{' '}
-        <span className="tw-font-semibold">{emailAddress}</span>
+        <span className="tw-font-semibold">{loginData?.emailAddress}</span>
       </p>
       <ConfirmSignUpForm />
     </div>

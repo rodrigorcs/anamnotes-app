@@ -1,9 +1,9 @@
 import { FC } from 'react'
 import { Input } from '../../common/Input'
-import { signIn } from 'aws-amplify/auth'
+import { fetchAuthSession, signIn } from 'aws-amplify/auth'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Button } from '../../common/Button'
-import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '../../../stores/auth'
 
 interface IFormFields {
   emailAddress: string
@@ -18,7 +18,9 @@ const FormFields: { [key in FormFieldKeys]: key } = {
 
 export const SignInForm: FC = () => {
   const formMethods = useForm<IFormFields>()
-  const navigate = useNavigate()
+  const setAuthenticatedUserFromCognitoSession = useAuthStore(
+    (state) => state.setAuthenticatedUserFromCognitoSession,
+  )
 
   const handleSignIn = async ({ emailAddress, password }: IFormFields) => {
     const { isSignedIn } = await signIn({
@@ -26,7 +28,10 @@ export const SignInForm: FC = () => {
       password,
     })
 
-    if (isSignedIn) navigate('/')
+    if (isSignedIn) {
+      const authSession = await fetchAuthSession()
+      setAuthenticatedUserFromCognitoSession(authSession)
+    }
   }
 
   const onSubmit = (formData: IFormFields) => handleSignIn(formData)

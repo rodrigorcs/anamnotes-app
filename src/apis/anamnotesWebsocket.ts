@@ -51,7 +51,6 @@ export class AnamnotesWebsocketAPI {
       }
 
       wsConnection.onerror = (event) => {
-        console.error(event)
         reject(event)
       }
     })
