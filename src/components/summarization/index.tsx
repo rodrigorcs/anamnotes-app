@@ -28,11 +28,9 @@ export type TCopiedSection = ESectionSlugs | 'all' | 'expanded' | null
 
 export const Summarization: FC = () => {
   const { conversationId } = useParams()
-  console.log({ conversationId })
+
   const selectConversation = useConversationStore((state) => state.selectConversation)
   const selectedConversation = useConversationStore((state) => state.selectedConversation)
-
-  console.log({ selectedConversation })
 
   const summarization = (selectedConversation as IConversationWithSummarizations)
     ?.summarizations?.[0]

@@ -16,14 +16,12 @@ export const RootContainer: FC = () => {
   useEffect(() => {
     const execute = async () => {
       const authSession = await fetchAuthSession()
-      console.log({ authSession })
       setAuthenticatedUserFromCognitoSession(authSession)
     }
     execute()
   }, [])
 
   useEffect(() => {
-    console.log({ user })
     if (rootPath === 'app' && !user) return navigate('/auth')
     if (rootPath === 'auth' && user) return navigate('/app')
   }, [user])

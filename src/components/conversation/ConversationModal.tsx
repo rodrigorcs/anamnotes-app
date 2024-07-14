@@ -9,7 +9,6 @@ import {
 } from 'iconoir-react'
 import { cn } from '../../utils/className'
 import { theme } from '../../theme'
-import { TSummarizationWebsocketMessage, EWebsocketMessageTypes } from '../../models/apis/websocket'
 import { Spinner } from '../common/Spinner'
 import { useConversationStore } from '../../stores/conversations'
 import { ERecordingState, useRecordingStore } from '../../stores/recording'
@@ -17,6 +16,7 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { AnamnotesRestAPI } from '../../apis/anamnotesRest'
 import { AnamnotesWebsocketAPI } from '../../apis/anamnotesWebsocket'
+import { useNavigate } from 'react-router-dom'
 dayjs.extend(duration)
 
 interface IStartConversationContentProps {
@@ -181,6 +181,8 @@ export const ConversationModal: FC = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const recordingStateRef = useRef<ERecordingState>(ERecordingState.IDLE)
 
+  const navigate = useNavigate()
+
   const addConversation = useConversationStore((state) => state.addConversation)
   const selectConversation = useConversationStore((state) => state.selectConversation)
   const recordingState = useRecordingStore((state) => state.recordingState)
@@ -270,7 +272,7 @@ export const ConversationModal: FC = () => {
         conversationIdRef.current,
       )
       addConversation(conversationWithSummarization)
-      selectConversation(conversationWithSummarization.id)
+      navigate(`../${conversationIdRef.current}`)
       setRecordingState(ERecordingState.SUCCESS)
     } catch (error) {
       console.error(error)
