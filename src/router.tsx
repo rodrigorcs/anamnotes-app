@@ -8,6 +8,8 @@ import { AuthorizedContainer } from './components/common/containers/AuthorizedCo
 import { ConversationContainer } from './components/conversation/ConversationContainer'
 import { Conversation } from './components/conversation'
 import { Summarization } from './components/summarization'
+import { ForgotPasswordContent } from './components/auth/ForgotPassword'
+import { ResetPasswordContent } from './components/auth/ResetPassword'
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +30,14 @@ export const router = createBrowserRouter([
           {
             path: 'sign-up/confirm',
             element: <ConfirmSignUpContent />,
+          },
+          {
+            path: 'forgot-password',
+            element: <ForgotPasswordContent />,
+          },
+          {
+            path: 'forgot-password/reset',
+            element: <ResetPasswordContent />,
           },
         ],
       },

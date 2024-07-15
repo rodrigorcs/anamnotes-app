@@ -10,8 +10,10 @@ import {
   SignInFormSchema,
   TSignInFormData,
 } from '../../../models/forms/SignInForm'
+import { useNavigate } from 'react-router-dom'
 
 export const SignInForm: FC = () => {
+  const navigate = useNavigate()
   const formMethods = useForm<TSignInFormData>({
     resolver: zodResolver(SignInFormSchema),
   })
@@ -56,6 +58,16 @@ export const SignInForm: FC = () => {
           className="tw-mt-2"
           type="password"
           autoComplete="current-password"
+        />
+        <Button
+          text="Esqueci minha senha"
+          variant="tertiary"
+          size="fit"
+          className="tw-mt-2 tw-self-end"
+          textClassName="tw-text-xs hover:tw-underline"
+          onClick={() => {
+            navigate('../forgot-password')
+          }}
         />
         <Button text="Entrar" type="submit" isLoading={isSigningIn} className="tw-mt-12" />
       </form>

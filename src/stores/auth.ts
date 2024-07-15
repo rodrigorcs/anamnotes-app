@@ -7,6 +7,10 @@ export interface ILoginData {
   emailAddress: string
 }
 
+export interface IResetPasswordData {
+  emailAddress: string
+}
+
 const getUserDataFromCognitoSession = (cognitoSession: AuthSession): TAuthenticatedUser | null => {
   const idTokenPayload = cognitoSession.tokens?.idToken?.payload
   if (!idTokenPayload) return null
@@ -27,15 +31,21 @@ const getUserDataFromCognitoSession = (cognitoSession: AuthSession): TAuthentica
 
 interface IAuthStore {
   loginData: ILoginData | null
+  resetPasswordData: IResetPasswordData | null
   user: TAuthenticatedUser | null
   hasFetchedAuthSession: boolean
   setLoginData: (data: ILoginData) => void
+  setResetPasswordData: (data: IResetPasswordData) => void
   setAuthenticatedUserFromCognitoSession: (cognitoSession: AuthSession) => void
   clearUser: () => void
 }
 
-const INITIAL_STATE: Pick<IAuthStore, 'loginData' | 'user' | 'hasFetchedAuthSession'> = {
+const INITIAL_STATE: Pick<
+  IAuthStore,
+  'loginData' | 'resetPasswordData' | 'user' | 'hasFetchedAuthSession'
+> = {
   loginData: null,
+  resetPasswordData: null,
   user: null,
   hasFetchedAuthSession: false,
 } as const
@@ -45,6 +55,9 @@ export const useAuthStore = create<IAuthStore>((set) => ({
 
   setLoginData: ({ fullName, emailAddress }: ILoginData) =>
     set(() => ({ loginData: { fullName, emailAddress } })),
+
+  setResetPasswordData: ({ emailAddress }: IResetPasswordData) =>
+    set(() => ({ resetPasswordData: { emailAddress } })),
 
   setAuthenticatedUserFromCognitoSession: (cognitoSession: AuthSession) => {
     const user = getUserDataFromCognitoSession(cognitoSession)
