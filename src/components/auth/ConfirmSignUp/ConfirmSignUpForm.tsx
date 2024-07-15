@@ -5,19 +5,18 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { Button } from '../../common/Button'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../../stores/auth'
-
-interface IFormFields {
-  otp: string
-}
-type FormFieldKeys = keyof IFormFields
-
-const FormFields: { [key in FormFieldKeys]: key } = {
-  otp: 'otp',
-} as const
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  ConfirmSignUpFormFields,
+  ConfirmSignUpFormSchema,
+  TConfirmSignUpFormData,
+} from '../../../models/forms/ConfirmSignUpForm'
 
 export const ConfirmSignUpForm: FC = () => {
   const navigate = useNavigate()
-  const formMethods = useForm<IFormFields>()
+  const formMethods = useForm<TConfirmSignUpFormData>({
+    resolver: zodResolver(ConfirmSignUpFormSchema),
+  })
 
   const [isConfirmingSignUp, setIsConfirmingSignUp] = useState(false)
 
@@ -27,7 +26,7 @@ export const ConfirmSignUpForm: FC = () => {
     if (!loginData) navigate('..')
   }, [loginData])
 
-  const handleConfirmSignUp = async ({ otp }: IFormFields) => {
+  const handleConfirmSignUp = async ({ otp }: TConfirmSignUpFormData) => {
     if (!loginData) throw new Error('Login data not found')
     setIsConfirmingSignUp(true)
 
@@ -40,17 +39,18 @@ export const ConfirmSignUpForm: FC = () => {
     setIsConfirmingSignUp(false)
   }
 
-  const onSubmit = (formData: IFormFields) => handleConfirmSignUp(formData)
+  const onSubmit = (formData: TConfirmSignUpFormData) => handleConfirmSignUp(formData)
 
   return (
     <FormProvider {...formMethods}>
       <form onSubmit={formMethods.handleSubmit(onSubmit)} className="tw-flex tw-flex-col tw-mt-6">
         <Input
-          id={FormFields.otp}
+          id={ConfirmSignUpFormFields.otp}
           title="Código de verificação"
-          register={formMethods.register}
           placeholder="123456"
           className="tw-mt-2"
+          type="text"
+          autoComplete="one-time-code"
         />
         <Button
           text="Confirmar"

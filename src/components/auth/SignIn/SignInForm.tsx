@@ -4,20 +4,17 @@ import { fetchAuthSession, signIn } from 'aws-amplify/auth'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Button } from '../../common/Button'
 import { useAuthStore } from '../../../stores/auth'
-
-interface IFormFields {
-  emailAddress: string
-  password: string
-}
-type FormFieldKeys = keyof IFormFields
-
-const FormFields: { [key in FormFieldKeys]: key } = {
-  emailAddress: 'emailAddress',
-  password: 'password',
-} as const
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  SignInFormFields,
+  SignInFormSchema,
+  TSignInFormData,
+} from '../../../models/forms/SignInForm'
 
 export const SignInForm: FC = () => {
-  const formMethods = useForm<IFormFields>()
+  const formMethods = useForm<TSignInFormData>({
+    resolver: zodResolver(SignInFormSchema),
+  })
 
   const [isSigningIn, setIsSigningIn] = useState(false)
 
@@ -25,7 +22,7 @@ export const SignInForm: FC = () => {
     (state) => state.setAuthenticatedUserFromCognitoSession,
   )
 
-  const handleSignIn = async ({ emailAddress, password }: IFormFields) => {
+  const handleSignIn = async ({ emailAddress, password }: TSignInFormData) => {
     setIsSigningIn(true)
     const { isSignedIn } = await signIn({
       username: emailAddress,
@@ -39,24 +36,26 @@ export const SignInForm: FC = () => {
     setIsSigningIn(false)
   }
 
-  const onSubmit = (formData: IFormFields) => handleSignIn(formData)
+  const onSubmit = (formData: TSignInFormData) => handleSignIn(formData)
 
   return (
     <FormProvider {...formMethods}>
       <form onSubmit={formMethods.handleSubmit(onSubmit)} className="tw-flex tw-flex-col tw-mt-12">
         <Input
-          id={FormFields.emailAddress}
-          register={formMethods.register}
+          id={SignInFormFields.emailAddress}
           title="E-mail"
           placeholder="exemplo@email.com"
           className="tw-mt-2"
+          type="email"
+          autoComplete="email"
         />
         <Input
-          id={FormFields.password}
-          register={formMethods.register}
+          id={SignInFormFields.password}
           title="Senha"
           placeholder="Digite a sua senha"
           className="tw-mt-2"
+          type="password"
+          autoComplete="current-password"
         />
         <Button text="Entrar" type="submit" isLoading={isSigningIn} className="tw-mt-12" />
       </form>
