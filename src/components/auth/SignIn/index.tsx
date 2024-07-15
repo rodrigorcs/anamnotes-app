@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { SignInForm } from './SignInForm'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../../stores/auth'
@@ -6,6 +6,7 @@ import { getFirstNameFromFullName } from '../../../utils/names'
 
 export const SignInContent: FC = () => {
   const navigate = useNavigate()
+
   const loginData = useAuthStore((state) => state.loginData)
   const firstName = getFirstNameFromFullName(loginData?.fullName)
 
@@ -15,7 +16,7 @@ export const SignInContent: FC = () => {
         Não tem uma conta?{' '}
         <a
           className="tw-text-brand-500 hover:tw-underline hover:tw-cursor-pointer"
-          onClick={() => navigate('/sign-up')}
+          onClick={() => navigate('../sign-up')}
         >
           Crie uma conta
         </a>

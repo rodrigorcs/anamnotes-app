@@ -31,6 +31,7 @@ interface IAuthStore {
   hasFetchedAuthSession: boolean
   setLoginData: (data: ILoginData) => void
   setAuthenticatedUserFromCognitoSession: (cognitoSession: AuthSession) => void
+  clearUser: () => void
 }
 
 const INITIAL_STATE: Pick<IAuthStore, 'loginData' | 'user' | 'hasFetchedAuthSession'> = {
@@ -48,5 +49,9 @@ export const useAuthStore = create<IAuthStore>((set) => ({
   setAuthenticatedUserFromCognitoSession: (cognitoSession: AuthSession) => {
     const user = getUserDataFromCognitoSession(cognitoSession)
     if (user) set(() => ({ user, hasFetchedAuthSession: true }))
+  },
+
+  clearUser: () => {
+    set(() => ({ user: null }))
   },
 }))

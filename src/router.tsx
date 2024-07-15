@@ -24,7 +24,10 @@ export const router = createBrowserRouter([
           {
             path: 'sign-up',
             element: <SignUpContent />,
-            children: [{ path: 'confirm', element: <ConfirmSignUpContent /> }],
+          },
+          {
+            path: 'sign-up/confirm',
+            element: <ConfirmSignUpContent />,
           },
         ],
       },

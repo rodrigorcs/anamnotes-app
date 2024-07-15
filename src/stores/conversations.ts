@@ -37,19 +37,27 @@ const getConversationWithSummarization = async () => {
 
 interface IConversationStore {
   conversations: IConversation[]
-  clients: IClient[]
+  clients: IClient[] | null
   selectedConversation: IConversationWithSummarizations | null
   updateConversations: (conversations: IConversation[]) => void
   selectConversation: (conversationId: string) => void
   selectLatestConversationByClientId: (clientId: string) => void
   clearConversationSelection: () => void
   addConversation: (conversation: IConversation) => void
+  clearConversationsState: () => void
 }
 
-export const useConversationStore = create<IConversationStore>((set) => ({
+const INITIAL_STATE: Pick<
+  IConversationStore,
+  'conversations' | 'clients' | 'selectedConversation'
+> = {
   conversations: [],
   clients: [],
   selectedConversation: null,
+} as const
+
+export const useConversationStore = create<IConversationStore>((set) => ({
+  ...INITIAL_STATE,
   updateConversations: (conversations: IConversation[]) =>
     set(() => ({ conversations, clients: extractClientsWithLastConversationDate(conversations) })),
   selectConversation: async (conversationId: string) => {
@@ -89,4 +97,6 @@ export const useConversationStore = create<IConversationStore>((set) => ({
         clients: extractClientsWithLastConversationDate(updatedConversations),
       }
     }),
+
+  clearConversationsState: () => set(INITIAL_STATE),
 }))

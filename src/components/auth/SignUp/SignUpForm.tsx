@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { Input } from '../../common/Input'
 import { signUp } from 'aws-amplify/auth'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -21,10 +21,14 @@ const FormFields: { [key in FormFieldKeys]: key } = {
 
 export const SignUpForm: FC = () => {
   const formMethods = useForm<IFormFields>()
+
+  const [isSigningUp, setIsSigningUp] = useState(false)
+
   const setLoginData = useAuthStore((state) => state.setLoginData)
   const navigate = useNavigate()
 
   const handleSignUp = async ({ fullName, emailAddress, password }: IFormFields) => {
+    setIsSigningUp(true)
     const { nextStep } = await signUp({
       username: emailAddress,
       password,
@@ -41,6 +45,7 @@ export const SignUpForm: FC = () => {
     if (nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
       navigate('confirm')
     }
+    setIsSigningUp(false)
   }
 
   const onSubmit = (formData: IFormFields) => handleSignUp(formData)
@@ -69,7 +74,7 @@ export const SignUpForm: FC = () => {
           placeholder="Crie uma senha"
           className="tw-mt-2"
         />
-        <Button text="Inscreva-se" type="submit" className="tw-mt-12" />
+        <Button text="Inscreva-se" type="submit" isLoading={isSigningUp} className="tw-mt-12" />
       </form>
     </FormProvider>
   )

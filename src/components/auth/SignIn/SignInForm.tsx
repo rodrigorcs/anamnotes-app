@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { Input } from '../../common/Input'
 import { fetchAuthSession, signIn } from 'aws-amplify/auth'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -18,11 +18,15 @@ const FormFields: { [key in FormFieldKeys]: key } = {
 
 export const SignInForm: FC = () => {
   const formMethods = useForm<IFormFields>()
+
+  const [isSigningIn, setIsSigningIn] = useState(false)
+
   const setAuthenticatedUserFromCognitoSession = useAuthStore(
     (state) => state.setAuthenticatedUserFromCognitoSession,
   )
 
   const handleSignIn = async ({ emailAddress, password }: IFormFields) => {
+    setIsSigningIn(true)
     const { isSignedIn } = await signIn({
       username: emailAddress,
       password,
@@ -32,6 +36,7 @@ export const SignInForm: FC = () => {
       const authSession = await fetchAuthSession()
       setAuthenticatedUserFromCognitoSession(authSession)
     }
+    setIsSigningIn(false)
   }
 
   const onSubmit = (formData: IFormFields) => handleSignIn(formData)
@@ -53,7 +58,7 @@ export const SignInForm: FC = () => {
           placeholder="Digite a sua senha"
           className="tw-mt-2"
         />
-        <Button text="Entrar" type="submit" className="tw-mt-12" />
+        <Button text="Entrar" type="submit" isLoading={isSigningIn} className="tw-mt-12" />
       </form>
     </FormProvider>
   )

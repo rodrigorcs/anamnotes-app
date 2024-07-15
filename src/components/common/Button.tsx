@@ -3,9 +3,10 @@ import { ButtonHTMLAttributes, FC, ReactNode } from 'react'
 import { theme } from '../../theme'
 import { cn } from '../../utils/className'
 import { ClassNameValue } from 'tailwind-merge'
+import { Spinner } from './Spinner'
 
 type TButtonVariant = 'primary' | 'secondary' | 'tertiary'
-type TButtonSize = 'small' | 'medium'
+type TButtonSize = 'fit' | 'small' | 'medium'
 
 interface IStyles {
   buttonClassNames: ClassNameValue
@@ -57,8 +58,11 @@ interface IProps {
   textClassName?: ClassNameValue
   iconClassName?: ClassNameValue
   isDisabled?: boolean
+  isLoading?: boolean
   onClick?: () => void
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type']
+  iconSize?: number
+  iconStrokeWidth?: number
 }
 
 export const Button: FC<IProps> = ({
@@ -72,8 +76,11 @@ export const Button: FC<IProps> = ({
   textClassName,
   iconClassName,
   isDisabled,
+  isLoading,
   onClick,
   type,
+  iconSize = 1.5,
+  iconStrokeWidth = 2,
 }) => {
   const variantStyles = getStylesByVariant(variant)
 
@@ -83,18 +90,18 @@ export const Button: FC<IProps> = ({
         'tw-flex tw-group tw-items-center tw-justify-center tw-transition-colors',
         variantStyles.buttonClassNames,
         rounded ? 'tw-rounded-full' : 'tw-rounded-lg',
-        size === 'small' ? 'tw-h-10' : 'tw-h-11',
+        size !== 'fit' ? ('small' ? 'tw-h-10' : 'tw-h-11') : undefined,
         className,
       )}
       onClick={onClick}
-      disabled={isDisabled}
+      disabled={isDisabled || isLoading}
       type={type}
     >
       <IconoirProvider
         iconProps={{
-          strokeWidth: 2,
-          width: '1.5em',
-          height: '1.5em',
+          strokeWidth: iconStrokeWidth,
+          width: `${iconSize}em`,
+          height: `${iconSize}em`,
           ...variantStyles.iconProps,
           className: cn('tw-transition-colors', variantStyles.iconProps.className, iconClassName),
         }}
@@ -113,7 +120,17 @@ export const Button: FC<IProps> = ({
             {text}
           </p>
         )}
-        {IconRight && IconRight}
+        {isLoading ? (
+          <Spinner
+            className="tw-animate-spin tw-ml-2"
+            color={theme.colors['neutrals-white']}
+            strokeWidth={2}
+            width="1.125em"
+            height="1.125em"
+          />
+        ) : (
+          IconRight && IconRight
+        )}
       </IconoirProvider>
     </button>
   )

@@ -68,16 +68,16 @@ export const ClientsList: FC<IProps> = ({ searchQuery, className }) => {
   const clients = useConversationStore((state) => state.clients)
   const filteredClients =
     searchQuery.length > 2
-      ? clients.filter((client) => client.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      ? clients?.filter((client) => client.name.toLowerCase().includes(searchQuery.toLowerCase()))
       : clients
 
-  const clientGroups = getGroupedClientsByPeriod(filteredClients)
+  const clientGroups = getGroupedClientsByPeriod(filteredClients ?? [])
   return (
-    <>
-      {!clients.length ? (
+    <div className={cn('tw-flex tw-flex-col tw-flex-1 tw-overflow-auto', className)}>
+      {!clients ? (
         <ClientsListSkeleton />
       ) : (
-        <div className={cn('tw-overflow-y-auto', className)}>
+        <div>
           {clientGroups
             .filter((clientGroup) => clientGroup.clients.length)
             .map((clientGroup, index) => {
@@ -93,6 +93,6 @@ export const ClientsList: FC<IProps> = ({ searchQuery, className }) => {
             })}
         </div>
       )}
-    </>
+    </div>
   )
 }

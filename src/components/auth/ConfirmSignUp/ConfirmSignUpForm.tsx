@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Input } from '../../common/Input'
 import { confirmSignUp } from 'aws-amplify/auth'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -18,17 +18,26 @@ const FormFields: { [key in FormFieldKeys]: key } = {
 export const ConfirmSignUpForm: FC = () => {
   const navigate = useNavigate()
   const formMethods = useForm<IFormFields>()
+
+  const [isConfirmingSignUp, setIsConfirmingSignUp] = useState(false)
+
   const loginData = useAuthStore((state) => state.loginData)
+
+  useEffect(() => {
+    if (!loginData) navigate('..')
+  }, [loginData])
 
   const handleConfirmSignUp = async ({ otp }: IFormFields) => {
     if (!loginData) throw new Error('Login data not found')
+    setIsConfirmingSignUp(true)
 
     const { isSignUpComplete } = await confirmSignUp({
       username: loginData.emailAddress,
       confirmationCode: otp,
     })
 
-    if (isSignUpComplete) navigate('/sign-in')
+    if (isSignUpComplete) navigate('/auth/sign-in')
+    setIsConfirmingSignUp(false)
   }
 
   const onSubmit = (formData: IFormFields) => handleConfirmSignUp(formData)
@@ -43,7 +52,12 @@ export const ConfirmSignUpForm: FC = () => {
           placeholder="123456"
           className="tw-mt-2"
         />
-        <Button text="Confirmar" type="submit" className="tw-mt-12" />
+        <Button
+          text="Confirmar"
+          type="submit"
+          isLoading={isConfirmingSignUp}
+          className="tw-mt-12"
+        />
       </form>
     </FormProvider>
   )

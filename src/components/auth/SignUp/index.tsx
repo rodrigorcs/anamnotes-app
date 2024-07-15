@@ -11,7 +11,7 @@ export const SignUpContent: FC = () => {
         Já tem uma conta?{' '}
         <a
           className="tw-text-brand-500 hover:tw-underline hover:tw-cursor-pointer"
-          onClick={() => navigate('/sign-in')}
+          onClick={() => navigate('../sign-in')}
         >
           Faça login aqui
         </a>
