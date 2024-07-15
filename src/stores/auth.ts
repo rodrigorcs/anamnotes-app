@@ -28,21 +28,25 @@ const getUserDataFromCognitoSession = (cognitoSession: AuthSession): TAuthentica
 interface IAuthStore {
   loginData: ILoginData | null
   user: TAuthenticatedUser | null
+  hasFetchedAuthSession: boolean
   setLoginData: (data: ILoginData) => void
   setAuthenticatedUserFromCognitoSession: (cognitoSession: AuthSession) => void
 }
 
-const INITIAL_STATE: Pick<IAuthStore, 'loginData' | 'user'> = {
+const INITIAL_STATE: Pick<IAuthStore, 'loginData' | 'user' | 'hasFetchedAuthSession'> = {
   loginData: null,
   user: null,
+  hasFetchedAuthSession: false,
 } as const
 
 export const useAuthStore = create<IAuthStore>((set) => ({
   ...INITIAL_STATE,
+
   setLoginData: ({ fullName, emailAddress }: ILoginData) =>
     set(() => ({ loginData: { fullName, emailAddress } })),
+
   setAuthenticatedUserFromCognitoSession: (cognitoSession: AuthSession) => {
     const user = getUserDataFromCognitoSession(cognitoSession)
-    if (user) set(() => ({ user }))
+    if (user) set(() => ({ user, hasFetchedAuthSession: true }))
   },
 }))

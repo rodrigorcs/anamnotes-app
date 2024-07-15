@@ -1,8 +1,17 @@
-import { FC } from 'react'
-import { Outlet } from 'react-router-dom'
+import { FC, useEffect } from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
 import signUpImage from '../../../public/assets/images/sign-up.png'
+import { useAuthStore } from '../../stores/auth'
 
 export const AuthContainer: FC = () => {
+  const navigate = useNavigate()
+  const user = useAuthStore((state) => state.user)
+  const hasFetchedAuthSession = useAuthStore((state) => state.hasFetchedAuthSession)
+
+  useEffect(() => {
+    if (hasFetchedAuthSession && user) navigate('/app')
+  }, [user])
+
   return (
     <div className="tw-flex-1 tw-flex tw-p-4 tw-justify-end">
       <div className="tw-flex-1 tw-flex tw-pl-24 tw-pr-28 tw-pt-16 tw-py-28 tw-max-w-[42rem]">

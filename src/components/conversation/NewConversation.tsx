@@ -1,12 +1,17 @@
 import { FC } from 'react'
 import { cn } from '../../utils/className'
+import { useAuthStore } from '../../stores/auth'
+import { getFirstNameFromFullName } from '../../utils/names'
 
 export const NewConversation: FC = () => {
+  const user = useAuthStore((state) => state.user)
+  const firstName = getFirstNameFromFullName(user?.fullName)
+
   return (
     <div className="tw-flex tw-flex-col tw-flex-1">
       <h1 className="tw-text-6xl tw-font-medium ">
         <span className="tw-bg-gradient-to-tr tw-from-[#3C65C7] tw-to-[#1F97B1] tw-text-neutrals-white tw-text-opacity-0 tw-bg-clip-text">
-          Olá, Roque!
+          {`Olá${firstName ? `, ${firstName}` : ''}!`}
         </span>{' '}
         👋🏻
       </h1>

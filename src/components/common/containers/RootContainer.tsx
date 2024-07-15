@@ -1,14 +1,9 @@
 import { FC, useEffect } from 'react'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { useAuthStore } from '../../../stores/auth'
 import { fetchAuthSession } from 'aws-amplify/auth'
 
 export const RootContainer: FC = () => {
-  const navigate = useNavigate()
-  const { pathname: path } = useLocation()
-  const rootPath = path.split('/')[1]
-
-  const user = useAuthStore((state) => state.user)
   const setAuthenticatedUserFromCognitoSession = useAuthStore(
     (state) => state.setAuthenticatedUserFromCognitoSession,
   )
@@ -18,13 +13,9 @@ export const RootContainer: FC = () => {
       const authSession = await fetchAuthSession()
       setAuthenticatedUserFromCognitoSession(authSession)
     }
+
     execute()
   }, [])
-
-  useEffect(() => {
-    if (rootPath === 'app' && !user) return navigate('/auth')
-    if (rootPath === 'auth' && user) return navigate('/app')
-  }, [user])
 
   return (
     <div id="anamnotes-app-container" className="tw-flex">
