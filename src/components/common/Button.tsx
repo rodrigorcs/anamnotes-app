@@ -1,5 +1,5 @@
 import { IconoirProvider } from 'iconoir-react'
-import { ButtonHTMLAttributes, FC, ReactNode } from 'react'
+import { ButtonHTMLAttributes, FC, MouseEventHandler, ReactNode } from 'react'
 import { theme } from '../../theme'
 import { cn } from '../../utils/className'
 import { ClassNameValue } from 'tailwind-merge'
@@ -59,7 +59,7 @@ interface IProps {
   iconClassName?: ClassNameValue
   isDisabled?: boolean
   isLoading?: boolean
-  onClick?: () => void
+  onClick?: MouseEventHandler<HTMLButtonElement>
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type']
   iconSize?: number
   iconStrokeWidth?: number
@@ -78,7 +78,7 @@ export const Button: FC<IProps> = ({
   isDisabled,
   isLoading,
   onClick,
-  type,
+  type = 'button',
   iconSize = 1.5,
   iconStrokeWidth = 2,
 }) => {

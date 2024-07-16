@@ -8,7 +8,10 @@ export const theme = {
 
     'feedback-positive-500': '#00472D',
     'feedback-positive-300': '#1E8560',
-    'feedback-positive-100': '#E0FFF4',
+    'feedback-positive-200': '#E0FFF4',
+    'feedback-positive-100': '#F0F6F3',
+
+    'feedback-warning-100': '#FDF4EB',
 
     'feedback-negative-500': '#520013',
     'feedback-negative-300': '#CC153F',
@@ -17,7 +20,8 @@ export const theme = {
 
     'feedback-info-500': '#004C52',
     'feedback-info-300': '#138991',
-    'feedback-info-100': '#E0FDFF',
+    'feedback-info-200': '#E0FDFF',
+    'feedback-info-100': '#EAF5FF',
 
     'neutrals-900': '#171B21',
     'neutrals-800': '#2B2F36',

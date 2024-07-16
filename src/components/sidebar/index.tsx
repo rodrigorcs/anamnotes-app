@@ -8,6 +8,7 @@ import { useRecordingStore } from '../../stores/recording'
 import { useNavigate } from 'react-router-dom'
 import { signOut } from 'aws-amplify/auth'
 import { useAuthStore } from '../../stores/auth'
+import { useFeedbackStore } from '../../stores/feedback'
 
 export const Sidebar: FC = () => {
   const navigate = useNavigate()
@@ -17,6 +18,7 @@ export const Sidebar: FC = () => {
   const clearConversationsState = useConversationStore((state) => state.clearConversationsState)
   const clearRecordingState = useRecordingStore((state) => state.clearRecordingState)
   const clearUser = useAuthStore((state) => state.clearUser)
+  const clearFeedback = useFeedbackStore((state) => state.clearFeedback)
 
   const [searchQuery, setSearchQuery] = useState<string>('')
 
@@ -25,6 +27,7 @@ export const Sidebar: FC = () => {
     clearRecordingState()
     clearConversationsState()
     clearUser()
+    clearFeedback()
   }
 
   return (

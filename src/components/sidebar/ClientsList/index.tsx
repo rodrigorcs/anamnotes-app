@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { ClassNameValue } from 'tailwind-merge'
 import { cn } from '../../../utils/className'
 import { ClientsListGroup } from './ClientsListGroup'
@@ -67,7 +67,9 @@ const getGroupedClientsByPeriod = (clients: IClient[]): IClientGroup[] => {
 }
 
 export const ClientsList: FC<IProps> = ({ searchQuery, className }) => {
-  const { feedback } = useFeedback({ subscribeToTopic: EFeedbackTopics.CONVERSATIONS })
+  const { feedback, setFeedback, clearFeedback } = useFeedback({
+    subscribeToTopic: EFeedbackTopics.CONVERSATIONS,
+  })
 
   const clients = useConversationStore((state) => state.clients)
   const filteredClients =
@@ -76,9 +78,22 @@ export const ClientsList: FC<IProps> = ({ searchQuery, className }) => {
       : clients
   const clientGroups = getGroupedClientsByPeriod(filteredClients ?? [])
 
+  useEffect(() => {
+    if (clients && !clients.length) {
+      setFeedback({
+        id: 'no-clients',
+        type: 'info',
+        title: 'Não há anamneses',
+        message: 'Aqui você encontrará todas as anamneses realizadas com seus pacientes.',
+      })
+      return
+    }
+    clearFeedback({ id: 'no-clients' })
+  }, [clients])
+
   return (
     <div className={cn('tw-flex tw-flex-col tw-flex-1 tw-overflow-auto', className)}>
-      {!clients?.length && !(feedback?.type === 'error') ? (
+      {!clients && !(feedback?.type === 'error') ? (
         <ClientsListSkeleton />
       ) : (
         <div>

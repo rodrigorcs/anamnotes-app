@@ -8,6 +8,7 @@ export enum EFeedbackTopics {
 }
 
 export interface IFeedback {
+  id?: string
   topic?: EFeedbackTopics
   type: 'success' | 'info' | 'warning' | 'error'
   title?: string
@@ -19,7 +20,8 @@ interface ISetFeedbackOptions {
 }
 
 interface IClearFeedbackOptions {
-  global: boolean
+  global?: boolean
+  id?: string
 }
 
 interface IProps {
@@ -54,6 +56,17 @@ export const useFeedback = (props?: IProps): IUseFeedback => {
     if (options?.global) {
       setGlobalFeedback(null)
       return
+    }
+
+    if (options?.id) {
+      if (globalFeedback?.id === options.id) {
+        setGlobalFeedback(null)
+        return
+      }
+      if (localFeedback?.id === options.id) {
+        setLocalFeedback(null)
+        return
+      }
     }
     setLocalFeedback(null)
   }

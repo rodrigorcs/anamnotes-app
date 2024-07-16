@@ -43,7 +43,7 @@ const INITIAL_STATE: Pick<
   'conversations' | 'clients' | 'selectedConversation'
 > = {
   conversations: [],
-  clients: [],
+  clients: null,
   selectedConversation: null,
 } as const
 
