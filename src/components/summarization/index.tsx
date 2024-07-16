@@ -75,7 +75,7 @@ export const Summarization: FC = () => {
           <SummarizationSkeleton />
         ) : (
           <>
-            {feedback?.type !== 'error' && (
+            {feedback?.type !== 'error' && feedback?.type !== 'warning' && (
               <>
                 <h1 className="tw-text-neutrals-800 tw-font-bold tw-text-3xl">
                   Resumo da anamnese

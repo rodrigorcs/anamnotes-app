@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { useFeedbackStore } from '../stores/feedback'
 
 export enum EFeedbackTopics {
+  CONVERSATIONS = 'conversations',
   CONVERSATION = 'conversation',
+  RECORDING = 'recording',
 }
 
 export interface IFeedback {

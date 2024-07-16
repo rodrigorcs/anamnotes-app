@@ -6,6 +6,8 @@ import { useConversationStore } from '../../../stores/conversations'
 import { IClient } from '../../../models/contracts/Conversations'
 import dayjs from 'dayjs'
 import { ClientsListSkeleton } from '../../skeletons/ClientsListSkeleton'
+import { EFeedbackTopics, useFeedback } from '../../../hooks/useFeedback'
+import { Alert } from '../../common/Alert'
 
 interface IProps {
   searchQuery: string
@@ -65,19 +67,22 @@ const getGroupedClientsByPeriod = (clients: IClient[]): IClientGroup[] => {
 }
 
 export const ClientsList: FC<IProps> = ({ searchQuery, className }) => {
+  const { feedback } = useFeedback({ subscribeToTopic: EFeedbackTopics.CONVERSATIONS })
+
   const clients = useConversationStore((state) => state.clients)
   const filteredClients =
     searchQuery.length > 2
       ? clients?.filter((client) => client.name.toLowerCase().includes(searchQuery.toLowerCase()))
       : clients
-
   const clientGroups = getGroupedClientsByPeriod(filteredClients ?? [])
+
   return (
     <div className={cn('tw-flex tw-flex-col tw-flex-1 tw-overflow-auto', className)}>
-      {!clients ? (
+      {!clients?.length && !(feedback?.type === 'error') ? (
         <ClientsListSkeleton />
       ) : (
         <div>
+          <Alert feedback={feedback} className="tw-mb-4 tw-mr-6" />
           {clientGroups
             .filter((clientGroup) => clientGroup.clients.length)
             .map((clientGroup, index) => {

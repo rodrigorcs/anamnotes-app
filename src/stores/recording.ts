@@ -6,6 +6,7 @@ export enum ERecordingState {
   PAUSED = 'paused',
   WAITING_RESPONSE = 'waiting-response',
   SUCCESS = 'success',
+  ERROR = 'error',
 }
 
 interface IRecordingStore {

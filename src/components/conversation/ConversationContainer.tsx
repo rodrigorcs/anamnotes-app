@@ -20,8 +20,19 @@ export const ConversationContainer: FC = () => {
 
   useEffect(() => {
     const fetchConversations = async () => {
-      const allConversations = await anamnotesRestAPI.getAllConversations()
-      setConversations(allConversations)
+      clearFeedback({ global: true })
+      try {
+        const allConversations = await anamnotesRestAPI.getAllConversations()
+        setConversations(allConversations)
+      } catch (error) {
+        setFeedback(
+          {
+            type: 'error',
+            message: 'Ocorreu um erro ao tentar carregar as anamneses.',
+          },
+          { postToTopic: EFeedbackTopics.CONVERSATIONS },
+        )
+      }
     }
 
     fetchConversations()
