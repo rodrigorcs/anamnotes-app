@@ -184,7 +184,6 @@ export const ConversationModal: FC = () => {
   const navigate = useNavigate()
 
   const addConversation = useConversationStore((state) => state.addConversation)
-  const selectConversation = useConversationStore((state) => state.selectConversation)
   const recordingState = useRecordingStore((state) => state.recordingState)
   const setRecordingState = useRecordingStore((state) => state.setRecordingState)
 
