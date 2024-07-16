@@ -122,7 +122,7 @@ const OngoingConversationContent: FC<IOngoingConversationContentProps> = ({
             <button
               className={cn(
                 'tw-bg-neutrals-100 hover:tw-bg-neutrals-200 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-size-14 tw-transition-colors',
-                isPaused && 'hover:tw-bg-feedback-negative-100',
+                isPaused && 'hover:tw-bg-feedback-negative-200',
               )}
               onClick={isPaused ? resumeRecording : pauseRecording}
             >

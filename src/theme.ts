@@ -12,7 +12,8 @@ export const theme = {
 
     'feedback-negative-500': '#520013',
     'feedback-negative-300': '#CC153F',
-    'feedback-negative-100': '#FFE0E8',
+    'feedback-negative-200': '#FFE0E8',
+    'feedback-negative-100': '#FAEDF2',
 
     'feedback-info-500': '#004C52',
     'feedback-info-300': '#138991',
