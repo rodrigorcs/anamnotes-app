@@ -7,9 +7,8 @@ import { Check as CheckIcon, Copy as CopyIcon } from 'iconoir-react'
 import { copyToClipboard } from '../../utils/clipboard'
 import { IConversationWithSummarizations } from '../../models/contracts/Conversations'
 import { SummarizationSkeleton } from '../skeletons/SummarizationSkeleton'
-import { useOutletContext } from 'react-router-dom'
-import { IConversationContainerContext } from '../conversation/ConversationContainer'
 import { Alert } from '../common/Alert'
+import { EFeedbackTopics, useFeedback } from '../../hooks/useFeedback'
 
 const getSummarizationClipboardText = (
   contentSections: TContentSection[],
@@ -29,7 +28,7 @@ const getSummarizationClipboardText = (
 export type TCopiedSection = ESectionSlugs | 'all' | 'expanded' | null
 
 export const Summarization: FC = () => {
-  const { feedback } = useOutletContext<IConversationContainerContext>()
+  const { feedback } = useFeedback({ subscribeToTopic: EFeedbackTopics.CONVERSATION })
 
   const selectedConversation = useConversationStore((state) => state.selectedConversation)
 

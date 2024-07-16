@@ -4,17 +4,13 @@ import { ConversationHeader } from './ConversationHeader'
 import { ContentContainer } from '../common/containers/ContentContainer'
 import { useConversationStore } from '../../stores/conversations'
 import { AnamnotesRestAPI } from '../../apis/anamnotesRest'
-import { useFeedback } from '../../hooks/useFeedback'
-
-export interface IConversationContainerContext {
-  feedback: ReturnType<typeof useFeedback>['feedback']
-}
+import { EFeedbackTopics, useFeedback } from '../../hooks/useFeedback'
 
 export const ConversationContainer: FC = () => {
   const navigate = useNavigate()
   const { conversationId } = useParams()
 
-  const { feedback, setFeedback, clearFeedback } = useFeedback()
+  const { setFeedback, clearFeedback } = useFeedback()
 
   const conversations = useConversationStore((state) => state.conversations)
   const setConversations = useConversationStore((state) => state.setConversations)
@@ -43,7 +39,7 @@ export const ConversationContainer: FC = () => {
     setSelectedConversation(conversation)
 
     const fetchConversationWithSummarizations = async () => {
-      clearFeedback()
+      clearFeedback({ global: true })
       try {
         const conversationWithSummarizations = await anamnotesRestAPI.getConversation(
           conversationId,
@@ -51,19 +47,25 @@ export const ConversationContainer: FC = () => {
         setSelectedConversation(conversationWithSummarizations)
 
         if (!conversationWithSummarizations.summarizations?.length) {
-          setFeedback({
-            type: 'warning',
-            title: 'Não há dados suficientes.',
-            message:
-              'Não foi gerado o resumo desta anamnese devido à pouca informação durante a sessão.',
-          })
+          setFeedback(
+            {
+              type: 'warning',
+              title: 'Não há dados suficientes.',
+              message:
+                'Não foi gerado o resumo desta anamnese devido à pouca informação disponível durante a sessão com o paciente.',
+            },
+            { postToTopic: EFeedbackTopics.CONVERSATION },
+          )
         }
       } catch (error) {
-        setFeedback({
-          type: 'error',
-          title: 'Erro ao carregar a anamnese.',
-          message: 'Ocorreu um erro ao tentar carregar a anamnese. Por favor, tente novamente.',
-        })
+        setFeedback(
+          {
+            type: 'error',
+            title: 'Erro ao carregar a anamnese.',
+            message: 'Ocorreu um erro ao tentar carregar a anamnese. Por favor, tente novamente.',
+          },
+          { postToTopic: EFeedbackTopics.CONVERSATION },
+        )
       }
     }
 
@@ -74,7 +76,7 @@ export const ConversationContainer: FC = () => {
     <div className="tw-flex tw-flex-col tw-flex-1 tw-bg-background-white">
       <ConversationHeader />
       <ContentContainer>
-        <Outlet context={{ feedback }} />
+        <Outlet />
       </ContentContainer>
     </div>
   )
