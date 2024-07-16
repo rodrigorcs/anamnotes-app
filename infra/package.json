@@ -1,0 +1,33 @@
+{
+  "name": "mf-customers-page-infra",
+  "version": "0.1.0",
+  "bin": {
+    "anamnotes-app-stack": "bin/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest --config jest.config.js --maxWorkers 1",
+    "cdk": "cdk",
+    "clean-cdk": "rm -rf cdk.out cdk.context.json",
+    "bootstrap": "cdk bootstrap",
+    "synth:app": "yarn clean-cdk && cdk synth --validation --app \"ts-node --prefer-ts-exts bin/index.ts\" > template.yaml",
+    "deploy:app": "cdk deploy --app \"npx ts-node --prefer-ts-exts bin/index.ts\" --require-approval never"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.2",
+    "@types/node": "^20.3.1",
+    "aws-cdk": "^2.84.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.3"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.84.0",
+    "aws-sdk": "^2.1399.0",
+    "constructs": "^10.2.52",
+    "dotenv": "^16.4.5",
+    "source-map-support": "^0.5.21"
+  }
+}
