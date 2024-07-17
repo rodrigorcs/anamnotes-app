@@ -28,25 +28,19 @@ export const SignInForm: FC = () => {
   )
 
   const handleSignIn = async ({ emailAddress, password }: TSignInFormData) => {
-    console.log('started login')
     setIsSigningIn(true)
     try {
       const { isSignedIn } = await signIn({
         username: emailAddress,
         password,
       })
-      console.log('succeeded on signIn', { isSignedIn })
 
       if (isSignedIn) {
         const authSession = await fetchAuthSession()
-        console.log('got auth session', { authSession })
         const authenticatedUser = setAuthenticatedUserFromCognitoSession(authSession)
-        console.log('got authenticatedUser', { authenticatedUser })
         return authenticatedUser
       }
-      console.log('try block success', { isSignedIn })
     } catch (error) {
-      console.log('error on signin', { error })
       if (error instanceof AuthError) {
         if (['UserNotFoundException', 'NotAuthorizedException'].includes(error.name)) {
           setFeedback({
