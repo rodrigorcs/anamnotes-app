@@ -21,6 +21,7 @@ jobs:
       - name: Set environment variables based on branch
         id: set-env
         run: |
+          echo "NODE_ENV=production" >> $GITHUB_ENV
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             echo "AWS_ACCOUNT_NUMBER=735967209496" >> $GITHUB_ENV
             echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
@@ -100,3 +101,7 @@ jobs:
           DEPLOYMENT_ENV: ci
           STAGE: ${{ env.STAGE }}
         working-directory: ./infra
+      - name: Invalidate CloudFront cache
+        run: |
+          DISTRIBUTION_ID=$(aws cloudformation describe-stacks --stack-name ${{ env.STAGE }}-anamnotes-app-stack --query "Stacks[0].Outputs[?OutputKey=='CloudfrontDistributionId'].OutputValue" --output text)
+          aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
