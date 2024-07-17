@@ -9,6 +9,7 @@ export const RootContainer: FC = () => {
   )
 
   useEffect(() => {
+    console.log('env', import.meta.env)
     const execute = async () => {
       const authSession = await fetchAuthSession()
       setAuthenticatedUserFromCognitoSession(authSession)
