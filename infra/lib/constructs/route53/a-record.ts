@@ -26,7 +26,7 @@ export class ARecord {
     )
 
     this.aRecord = new r53.ARecord(scope, `${config.projectName}-cf-a-record`, {
-      recordName: 'app',
+      recordName: props.domainName,
       target: r53.RecordTarget.fromAlias(new r53Targets.CloudFrontTarget(props.cfDistribution)),
       zone: hostedZone,
     })
