@@ -1,5 +1,5 @@
 import { Construct } from 'constructs'
-import { aws_cloudfront as cf, aws_s3 as s3 } from 'aws-cdk-lib'
+import { aws_cloudfront as cf, aws_certificatemanager as acm, aws_s3 as s3 } from 'aws-cdk-lib'
 import { config } from '../../../config'
 
 interface IProps {
@@ -7,6 +7,8 @@ interface IProps {
   bucket: s3.Bucket
   bucketPath?: string
   originAccessIdentity: cf.OriginAccessIdentity
+  certificate?: acm.ICertificate
+  domainName?: string
 }
 
 export class WebDistribution {
@@ -29,6 +31,16 @@ export class WebDistribution {
           ],
         },
       ],
+      ...(props.domainName &&
+        props.certificate && {
+          viewerCertificate: {
+            aliases: [props.domainName, `www.${props.domainName}`],
+            props: {
+              acmCertificateArn: props.certificate.certificateArn,
+              sslSupportMethod: cf.SSLMethod.SNI,
+            },
+          },
+        }),
     })
   }
 }

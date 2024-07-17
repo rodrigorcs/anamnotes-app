@@ -6,6 +6,7 @@ import { StaticWebsiteDeployment } from './lib/constructs/s3/deployment'
 import { OriginAccessIdentity } from './lib/constructs/cloudfront/origin-access-identity'
 import { WebDistribution } from './lib/constructs/cloudfront/distribution'
 import { ARecord } from './lib/constructs/route53/a-record'
+import { ExistingCertificate } from './lib/constructs/acm/certificate'
 
 export class AnamnotesAppStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -24,6 +25,12 @@ export class AnamnotesAppStack extends Stack {
       assetsPath: config.aws.s3.assetsPath,
     })
 
+    // ACM CERTIFICATE
+
+    const { certificate: acmCertificate } = new ExistingCertificate(this, {
+      certificateId: config.aws.acm.certificateId,
+    })
+
     // CLOUDFRONT DISTRIBUTION
 
     const { originAccessIdentity: websiteOAI } = new OriginAccessIdentity(this, {
@@ -35,6 +42,8 @@ export class AnamnotesAppStack extends Stack {
       bucket: websiteBucket,
       bucketPath: `/${config.projectId}`,
       originAccessIdentity: websiteOAI,
+      certificate: acmCertificate,
+      domainName: config.aws.route53.domainName,
     })
 
     // ROUTE53
