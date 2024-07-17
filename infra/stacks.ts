@@ -61,7 +61,7 @@ export class AnamnotesAppStack extends Stack {
 
     // OUTPUTS
 
-    new CfnOutput(this, 'cf-distribution-id', {
+    new CfnOutput(this, 'CloudfrontDistributionId', {
       value: websiteDistribution.distributionId,
       description: 'Cloudfront Distribution ID for Anamnotes App Website',
     })

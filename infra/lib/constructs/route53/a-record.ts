@@ -13,6 +13,8 @@ interface IProps {
   hostedZone?: r53.IHostedZone
 }
 
+// This doesn't always work, need to check in AWS Console if the A records are created
+// If not, try to create them manually in the AWS Console
 export class ARecord {
   public readonly aRecord: r53.ARecord
 
