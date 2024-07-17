@@ -1,4 +1,4 @@
-import { Stack, StackProps, aws_s3 as s3 } from 'aws-cdk-lib'
+import { CfnOutput, Stack, StackProps, aws_s3 as s3 } from 'aws-cdk-lib'
 import { Construct } from 'constructs'
 import { config } from './config'
 import { S3Bucket } from './lib/constructs/s3/bucket'
@@ -58,5 +58,12 @@ export class AnamnotesAppStack extends Stack {
     // PERMISSIONS
 
     websiteBucket.grantRead(websiteOAI)
+
+    // OUTPUTS
+
+    new CfnOutput(this, 'cf-distribution-id', {
+      value: websiteDistribution.distributionId,
+      description: 'Cloudfront Distribution ID for Anamnotes App Website',
+    })
   }
 }
