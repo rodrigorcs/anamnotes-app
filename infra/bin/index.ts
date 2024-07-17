@@ -10,8 +10,8 @@ export const createStack = (app: App) =>
     env: config.stack.env,
     description: `Resources for ${config.stage} Anamnotes app`,
     terminationProtection: stageValue({
-      prod: true,
-      staging: true,
+      prod: false, // Update to true when ready for production
+      staging: false,
     }),
     tags: {
       Project: config.projectName,
