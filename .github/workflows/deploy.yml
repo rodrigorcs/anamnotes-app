@@ -24,11 +24,19 @@ jobs:
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             echo "AWS_ACCOUNT_NUMBER=735967209496" >> $GITHUB_ENV
             echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
-            echo "STAGE=sandbox" >> $GITHUB_ENV
+            echo "STAGE=prod" >> $GITHUB_ENV
+            echo "VITE_ANAMNOTES_REST_BASE_URL=${{ secrets.PROD_ANAMNOTES_REST_BASE_URL }}" >> $GITHUB_ENV
+            echo "VITE_ANAMNOTES_WEBSOCKET_BASE_URL=${{ secrets.PROD_ANAMNOTES_WEBSOCKET_BASE_URL }}" >> $GITHUB_ENV
+            echo "VITE_COGNITO_USER_POOL_CLIENT_ID=${{ secrets.PROD_COGNITO_USER_POOL_CLIENT_ID }}" >> $GITHUB_ENV
+            echo "VITE_COGNITO_USER_POOL_ID=${{ secrets.PROD_COGNITO_USER_POOL_ID }}" >> $GITHUB_ENV
           elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
             echo "AWS_ACCOUNT_NUMBER=211125551501" >> $GITHUB_ENV
             echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
             echo "STAGE=staging" >> $GITHUB_ENV
+            echo "VITE_ANAMNOTES_REST_BASE_URL=${{ secrets.STAGING_ANAMNOTES_REST_BASE_URL }}" >> $GITHUB_ENV
+            echo "VITE_ANAMNOTES_WEBSOCKET_BASE_URL=${{ secrets.STAGING_ANAMNOTES_WEBSOCKET_BASE_URL }}" >> $GITHUB_ENV
+            echo "VITE_COGNITO_USER_POOL_CLIENT_ID=${{ secrets.STAGING_COGNITO_USER_POOL_CLIENT_ID }}" >> $GITHUB_ENV
+            echo "VITE_COGNITO_USER_POOL_ID=${{ secrets.STAGING_COGNITO_USER_POOL_ID }}" >> $GITHUB_ENV
           fi
       - name: Set Yarn cache for app
         uses: actions/cache@v3
