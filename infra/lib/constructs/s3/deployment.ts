@@ -8,9 +8,6 @@ interface IStaticWebSiteDeploymentProps {
   assetsPath: string
 }
 
-/**
- *  Deploys Static files into S3 bucket
- */
 export class StaticWebsiteDeployment {
   constructor(scope: Construct, props: IStaticWebSiteDeploymentProps) {
     new s3Deployment.BucketDeployment(scope, `${config.projectName}-static-website-deployment`, {

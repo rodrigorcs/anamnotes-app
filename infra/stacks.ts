@@ -32,6 +32,7 @@ export class AnamnotesAppStack extends Stack {
     new WebDistribution(this, {
       name: 'website',
       bucket: websiteBucket,
+      bucketPath: config.projectId,
       originAccessIdentity: websiteOAI,
     })
 

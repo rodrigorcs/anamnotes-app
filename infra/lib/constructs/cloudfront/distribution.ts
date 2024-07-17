@@ -5,6 +5,7 @@ import { config } from '../../../config'
 interface IProps {
   name: string
   bucket: s3.Bucket
+  bucketPath?: string
   originAccessIdentity: cf.OriginAccessIdentity
 }
 
@@ -19,6 +20,7 @@ export class WebDistribution {
         {
           s3OriginSource: {
             s3BucketSource: props.bucket,
+            originPath: props.bucketPath,
             originAccessIdentity: props.originAccessIdentity,
           },
           behaviors: [
