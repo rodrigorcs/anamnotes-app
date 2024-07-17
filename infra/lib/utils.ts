@@ -6,17 +6,6 @@ export const setAppStageProfile: SetAppStageProfile = {
   staging: AppStageProfiles.STAGING,
 }
 
-export const getDeploymentStage = (githubBranch: string | undefined): AppStage => {
-  if (githubBranch === GithubBranch.PRODUCTION) {
-    return AppStage.PRODUCTION
-  }
-  if (githubBranch === GithubBranch.STAGING) {
-    return AppStage.STAGING
-  }
-
-  throw new Error(`Invalid STAGE detected`)
-}
-
 export const validateEnv = (
   requiredEnvs: Array<keyof REQUIRED_ENV_VARIABLES>,
   env: { [key: string]: string | undefined },

@@ -1,10 +1,10 @@
 import * as path from 'path'
 import * as dotenv from 'dotenv'
-import { getDeploymentStage, stageValue, validateEnv } from './lib/utils'
+import { stageValue, validateEnv } from './lib/utils'
 import { REQUIRED_ENV_VARIABLES } from './lib/types'
 
 dotenv.config({
-  path: path.resolve(__dirname, `./.env.${getDeploymentStage(process.env.STAGE)}`),
+  path: path.resolve(__dirname, `./.env.${process.env.STAGE}`),
 })
 
 export const requiredEnvs: Array<keyof REQUIRED_ENV_VARIABLES> = [
@@ -16,7 +16,7 @@ export const requiredEnvs: Array<keyof REQUIRED_ENV_VARIABLES> = [
 
 const validatedEnvs = validateEnv(requiredEnvs, process.env)
 
-const stage = getDeploymentStage(validatedEnvs.STAGE)
+const stage = validatedEnvs.STAGE
 
 const projectId = 'anamnotes-app' as const
 const projectName = `${stage}-${projectId}` as const
