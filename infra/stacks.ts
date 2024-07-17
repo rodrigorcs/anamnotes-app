@@ -5,7 +5,7 @@ import { S3Bucket } from './lib/constructs/s3/bucket'
 import { StaticWebsiteDeployment } from './lib/constructs/s3/deployment'
 import { OriginAccessIdentity } from './lib/constructs/cloudfront/origin-access-identity'
 import { WebDistribution } from './lib/constructs/cloudfront/distribution'
-import { ARecord } from './lib/constructs/route53/a-record'
+import { GroupedARecords } from './lib/constructs/route53/a-record'
 import { ExistingCertificate } from './lib/constructs/acm/certificate'
 
 export class AnamnotesAppStack extends Stack {
@@ -48,9 +48,10 @@ export class AnamnotesAppStack extends Stack {
 
     // ROUTE53
 
-    new ARecord(this, {
+    new GroupedARecords(this, {
       cfDistribution: websiteDistribution,
-      domainName: config.aws.route53.domainName,
+      domainNames: [config.aws.route53.domainName, `www.${config.aws.route53.domainName}`],
+      hostedZoneName: config.aws.route53.domainName,
       hostedZoneId: config.aws.route53.hostedZoneId,
     })
 

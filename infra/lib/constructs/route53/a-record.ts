@@ -10,25 +10,64 @@ interface IProps {
   cfDistribution: cf.CloudFrontWebDistribution
   hostedZoneId: string
   domainName: string
+  hostedZone?: r53.IHostedZone
 }
 
 export class ARecord {
   public readonly aRecord: r53.ARecord
 
   constructor(scope: Construct, props: IProps) {
+    let hostedZone
+
+    if (props.hostedZone) {
+      hostedZone = props.hostedZone
+    } else {
+      hostedZone = r53.PublicHostedZone.fromHostedZoneAttributes(
+        scope,
+        `${config.projectName}-hosted-zone`,
+        {
+          hostedZoneId: props.hostedZoneId,
+          zoneName: props.domainName,
+        },
+      )
+    }
+
+    const aRecordId = `${config.projectName}-${props.domainName.split('.').join('-')}-a-record`
+
+    this.aRecord = new r53.ARecord(scope, aRecordId, {
+      recordName: props.domainName,
+      target: r53.RecordTarget.fromAlias(new r53Targets.CloudFrontTarget(props.cfDistribution)),
+      zone: hostedZone,
+    })
+  }
+}
+
+interface IGroupedARecordsProps extends Omit<IProps, 'domainName'> {
+  domainNames: string[]
+  hostedZoneName: string
+}
+
+export class GroupedARecords {
+  public readonly aRecords: r53.ARecord[] = []
+
+  constructor(scope: Construct, props: IGroupedARecordsProps) {
     const hostedZone = r53.PublicHostedZone.fromHostedZoneAttributes(
       scope,
       `${config.projectName}-hosted-zone`,
       {
         hostedZoneId: props.hostedZoneId,
-        zoneName: props.domainName,
+        zoneName: props.hostedZoneName,
       },
     )
 
-    this.aRecord = new r53.ARecord(scope, `${config.projectName}-cf-a-record`, {
-      recordName: props.domainName,
-      target: r53.RecordTarget.fromAlias(new r53Targets.CloudFrontTarget(props.cfDistribution)),
-      zone: hostedZone,
-    })
+    for (const domainName of props.domainNames) {
+      const { aRecord } = new ARecord(scope, {
+        ...props,
+        domainName,
+        hostedZone,
+      })
+
+      this.aRecords.push(aRecord)
+    }
   }
 }
