@@ -10,7 +10,7 @@ export class AnamnotesAppStack extends Stack {
 
     const { bucket: websiteBucket } = new S3Bucket(this, {
       name: 'website',
-      public: true,
+      publicReadAccess: true,
     })
 
     new StaticWebsiteDeployment(this, {
