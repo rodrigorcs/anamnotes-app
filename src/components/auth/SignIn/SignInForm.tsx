@@ -37,7 +37,8 @@ export const SignInForm: FC = () => {
 
       if (isSignedIn) {
         const authSession = await fetchAuthSession()
-        return setAuthenticatedUserFromCognitoSession(authSession)
+        const authenticatedUser = setAuthenticatedUserFromCognitoSession(authSession)
+        return authenticatedUser
       }
     } catch (error) {
       if (error instanceof AuthError) {

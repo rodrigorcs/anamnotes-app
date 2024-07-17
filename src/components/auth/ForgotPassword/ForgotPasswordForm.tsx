@@ -40,7 +40,6 @@ export const ForgotPasswordForm: FC = () => {
         goToResetPasswordPage(emailAddress)
       }
     } catch (error) {
-      console.log({ error })
       if (error instanceof AuthError && error.name === 'UserNotFoundException') {
         goToResetPasswordPage(emailAddress)
         return

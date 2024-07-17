@@ -38,7 +38,6 @@ export const ResetPasswordForm: FC = () => {
 
       navigate('/auth')
     } catch (error) {
-      console.log({ error })
       if (error instanceof AuthError) {
         if (['UserNotFoundException', 'CodeMismatchException'].includes(error.name)) {
           setFeedback({
