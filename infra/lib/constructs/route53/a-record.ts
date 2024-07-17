@@ -32,7 +32,7 @@ export class ARecord {
       )
     }
 
-    const aRecordId = `${config.projectName}-${props.domainName.replace('.', '-')}-a-record`
+    const aRecordId = `${config.projectName}-${props.domainName.split('.').join('-')}-a-record`
 
     this.aRecord = new r53.ARecord(scope, aRecordId, {
       recordName: props.domainName,
