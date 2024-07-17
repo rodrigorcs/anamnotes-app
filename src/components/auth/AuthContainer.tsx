@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
-import signUpImage from '../../../public/assets/images/sign-up.png'
+import signUpImage from '/assets/images/sign-up.png'
 import { useAuthStore } from '../../stores/auth'
 
 export const AuthContainer: FC = () => {

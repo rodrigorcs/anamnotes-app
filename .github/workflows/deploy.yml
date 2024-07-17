@@ -21,6 +21,7 @@ jobs:
       - name: Set environment variables based on branch
         id: set-env
         run: |
+          echo "NODE_ENV=production" >> $GITHUB_ENV
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             echo "AWS_ACCOUNT_NUMBER=735967209496" >> $GITHUB_ENV
             echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
