@@ -32,7 +32,9 @@ export class ARecord {
       )
     }
 
-    this.aRecord = new r53.ARecord(scope, `${config.projectName}-cf-a-record`, {
+    const aRecordId = `${config.projectName}-${props.domainName.replace('.', '-')}-a-record`
+
+    this.aRecord = new r53.ARecord(scope, aRecordId, {
       recordName: props.domainName,
       target: r53.RecordTarget.fromAlias(new r53Targets.CloudFrontTarget(props.cfDistribution)),
       zone: hostedZone,
@@ -46,7 +48,7 @@ interface IGroupedARecordsProps extends Omit<IProps, 'domainName'> {
 }
 
 export class GroupedARecords {
-  public readonly aRecords: r53.ARecord[]
+  public readonly aRecords: r53.ARecord[] = []
 
   constructor(scope: Construct, props: IGroupedARecordsProps) {
     const hostedZone = r53.PublicHostedZone.fromHostedZoneAttributes(
