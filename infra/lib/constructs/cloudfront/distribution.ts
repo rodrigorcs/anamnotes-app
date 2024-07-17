@@ -41,6 +41,9 @@ export class WebDistribution {
             },
           },
         }),
+      // TODO: Remove this to improve SEO
+      // https://stackoverflow.com/questions/51218979/react-router-doesnt-work-in-aws-s3-bucket
+      errorConfigurations: [{ errorCode: 404, responsePagePath: '/index.html', responseCode: 200 }],
     })
   }
 }
