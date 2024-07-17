@@ -5,6 +5,7 @@ import { S3Bucket } from './lib/constructs/s3/bucket'
 import { StaticWebsiteDeployment } from './lib/constructs/s3/deployment'
 import { OriginAccessIdentity } from './lib/constructs/cloudfront/origin-access-identity'
 import { WebDistribution } from './lib/constructs/cloudfront/distribution'
+import { ARecord } from './lib/constructs/route53/a-record'
 
 export class AnamnotesAppStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -29,11 +30,19 @@ export class AnamnotesAppStack extends Stack {
       name: 'website',
     })
 
-    new WebDistribution(this, {
+    const { webDistribution: websiteDistribution } = new WebDistribution(this, {
       name: 'website',
       bucket: websiteBucket,
       bucketPath: `/${config.projectId}`,
       originAccessIdentity: websiteOAI,
+    })
+
+    // ROUTE53
+
+    new ARecord(this, {
+      cfDistribution: websiteDistribution,
+      domainName: config.aws.route53.domainName,
+      hostedZoneId: config.aws.route53.hostedZoneId,
     })
 
     // PERMISSIONS

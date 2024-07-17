@@ -1,6 +1,6 @@
 import * as path from 'path'
 import * as dotenv from 'dotenv'
-import { getDeploymentStage, validateEnv } from './lib/utils'
+import { getDeploymentStage, stageValue, validateEnv } from './lib/utils'
 import { REQUIRED_ENV_VARIABLES } from './lib/types'
 
 dotenv.config({
@@ -29,6 +29,16 @@ export const config = {
   aws: {
     s3: {
       assetsPath: '../dist',
+    },
+    route53: {
+      hostedZoneId: stageValue<string>({
+        staging: 'Z03723123I6T44W2QOSIN',
+        prod: 'Z0448513YG2VMTOLT2NK',
+      }),
+      domainName: stageValue<string>({
+        staging: 'staging.anamnotes.com',
+        prod: 'anamnotes.com',
+      }),
     },
   },
   stack: {
