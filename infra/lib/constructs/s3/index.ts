@@ -18,6 +18,7 @@ export class S3Bucket {
 
   constructor(scope: Construct, props: IS3BucketProps) {
     const bucketName = `${config.projectName}-${props.name}-bucket`
+
     this.bucket = new s3.Bucket(scope, bucketName, {
       versioned: false,
       bucketName,
@@ -26,8 +27,8 @@ export class S3Bucket {
       objectOwnership: s3.ObjectOwnership.BUCKET_OWNER_ENFORCED,
       blockPublicAccess: props.public
         ? {
-            blockPublicAcls: true,
-            ignorePublicAcls: true,
+            blockPublicAcls: false,
+            ignorePublicAcls: false,
             restrictPublicBuckets: false,
             blockPublicPolicy: false,
           }
