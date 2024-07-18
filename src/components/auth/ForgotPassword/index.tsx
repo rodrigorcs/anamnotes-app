@@ -8,7 +8,7 @@ export const ForgotPasswordContent: FC = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="tw-flex-1 tw-flex tw-flex-col tw-justify-center tw-mb-14">
+    <div className="tw-flex-1 tw-flex tw-flex-col tw-justify-center">
       <div className="tw-flex">
         <Button
           IconLeft={<BackIcon />}

@@ -11,7 +11,7 @@ export const SignInContent: FC = () => {
   const firstName = getFirstNameFromFullName(loginData?.fullName)
 
   return (
-    <div className="tw-flex-1 tw-flex tw-flex-col tw-justify-center tw-mb-14">
+    <div className="tw-flex-1 tw-flex tw-flex-col tw-justify-center">
       <p className="tw-text-sm tw-text-neutrals-700">
         Não tem uma conta?{' '}
         <a
