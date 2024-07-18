@@ -6,8 +6,10 @@ import { useRecordingStore } from '../../../stores/recording'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
   StartConversationFormFields,
+  StartConversationFormSchema,
   TStartConversationFormData,
 } from '../../../models/forms/StartConversationForm'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 interface IProps {
   startRecording: (clientName: string) => void
@@ -16,7 +18,9 @@ interface IProps {
 export const StartConversationContent: FC<IProps> = ({ startRecording }) => {
   const setClientName = useRecordingStore((state) => state.setClientName)
 
-  const formMethods = useForm<TStartConversationFormData>({})
+  const formMethods = useForm<TStartConversationFormData>({
+    resolver: zodResolver(StartConversationFormSchema),
+  })
 
   const onSubmit = (data: TStartConversationFormData) => {
     setClientName(data.fullName)
