@@ -17,7 +17,7 @@ export const AuthContainer: FC = () => {
     <div className="tw-flex-1 tw-flex tw-p-4 tw-justify-end max-lg:tw-justify-center">
       <div
         className={cn(
-          'tw-flex-1 tw-flex tw-pl-24 tw-pr-28 tw-pt-16 tw-pb-28 tw-max-w-[42rem]',
+          'tw-flex-1 tw-flex tw-pl-24 tw-pr-28 tw-py-16 tw-max-w-[42rem]',
           'max-sm:tw-pl-14 max-sm:tw-pr-14',
           'max-xs:tw-pl-4 max-xs:tw-pr-4',
         )}
