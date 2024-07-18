@@ -6,6 +6,14 @@ export default {
     fontFamily: {
       sans: ['Inter', '"Inter"', 'sans-serif'],
     },
+    screens: {
+      xs: '480px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
     colors: {
       'brand-900': '#03133A',
       'brand-700': '#052269',
