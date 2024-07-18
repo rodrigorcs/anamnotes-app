@@ -49,7 +49,8 @@ export const Input: FC<IProps> = ({
       )}
       <div
         className={cn(
-          'tw-flex tw-bg-neutrals-white tw-border tw-border-neutrals-200 tw-rounded tw-h-10 tw-items-center tw-px-3 focus-within:tw-border-2 focus-within:tw-border-brand-500',
+          'tw-flex tw-bg-neutrals-white tw-border tw-border-neutrals-200 tw-rounded tw-h-10 tw-items-center tw-px-3',
+          'focus-within:tw-outline focus-within:tw-outline-2 focus-within:-tw-outline-offset-2 focus-within:tw-outline-brand-500',
           title && 'tw-mt-1',
         )}
       >
