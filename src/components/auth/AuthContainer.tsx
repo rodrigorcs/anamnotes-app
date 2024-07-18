@@ -19,7 +19,7 @@ export const AuthContainer: FC = () => {
         className={cn(
           'tw-flex-1 tw-pl-24 tw-pr-28 tw-py-16 tw-max-w-[42rem]',
           'max-sm:tw-pl-14 max-sm:tw-pr-14',
-          'max-xs:tw-pl-4 max-xs:tw-pr-4',
+          'max-xs:tw-pl-4 max-xs:tw-pr-4 tw-py-0',
         )}
       >
         <div className="tw-flex tw-flex-col tw-relative tw-top-[calc(50%-4.75rem)] tw-transform tw-translate-y-[calc(-50%+2.375rem)]">
