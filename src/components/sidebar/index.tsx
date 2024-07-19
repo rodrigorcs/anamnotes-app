@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { signOut } from 'aws-amplify/auth'
 import { useAuthStore } from '../../stores/auth'
 import { useFeedbackStore } from '../../stores/feedback'
+import { cn } from '../../utils/className'
 
 export const Sidebar: FC = () => {
   const navigate = useNavigate()
@@ -31,7 +32,12 @@ export const Sidebar: FC = () => {
   }
 
   return (
-    <div className="tw-flex tw-flex-col tw-w-72 tw-bg-background-100 tw-py-6">
+    <div
+      className={cn(
+        'tw-flex tw-flex-col tw-min-w-64 tw-w-72 tw-bg-background-100 tw-py-6',
+        'max-md:tw-hidden',
+      )}
+    >
       <div className="tw-flex-1 tw-flex tw-flex-col tw-max-h-full">
         <div className="tw-flex tw-flex-col tw-px-6">
           <Input
