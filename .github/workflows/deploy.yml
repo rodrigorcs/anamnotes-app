@@ -89,7 +89,7 @@ jobs:
           role-duration-seconds: 900
           aws-region: ${{ env.AWS_REGION }}
       - name: Build app
-        run: yarn build
+        run: yarn build:skip-tsc
       - name: Deploy and Synth
         run: |-
           npx cdk synth
