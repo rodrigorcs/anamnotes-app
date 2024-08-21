@@ -30,7 +30,7 @@ export const config = {
     acm: {
       certificateId: stageValue<string>({
         staging: 'a8eade8d-9b65-4b27-8a59-596e132898e8',
-        prod: '4da2fd45-4693-483e-84d3-d506823b9b48',
+        prod: 'e3750459-4261-463f-ba63-243923a6afb6',
       }),
     },
     route53: {
@@ -39,8 +39,8 @@ export const config = {
         prod: 'Z0448513YG2VMTOLT2NK',
       }),
       domainName: stageValue<string>({
-        staging: 'staging.anamnotes.com',
-        prod: 'anamnotes.com',
+        staging: 'app.staging.anamnotes.com',
+        prod: 'app.anamnotes.com',
       }),
     },
     s3: {
