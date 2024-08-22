@@ -77,7 +77,9 @@ export const Input: FC<IProps> = ({
           {IconRight && IconRight}
         </IconoirProvider>
       </div>
-      {!errorMessage && hint && <p className="tw-text-neutrals-500 tw-text-xs tw-mt-1">{hint}</p>}
+      {!errorMessage && hint && (
+        <p className="tw-text-neutrals-400 tw-font-light tw-text-xs tw-mt-1">{hint}</p>
+      )}
       {errorMessage && (
         <p className="tw-text-feedback-negative-300 tw-text-xs tw-mt-1">{errorMessage}</p>
       )}

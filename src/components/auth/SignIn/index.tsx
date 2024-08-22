@@ -12,23 +12,23 @@ export const SignInContent: FC = () => {
 
   return (
     <div className="tw-flex-1 tw-flex tw-flex-col tw-justify-center">
-      <p className="tw-text-sm tw-text-neutrals-700">
+      <h1 className="tw-mt-14 tw-text-xl tw-font-semibold tw-text-neutrals-700">{`Bom te ver${
+        firstName ? `, ${firstName}` : ''
+      }! 👋🏻`}</h1>
+      <p className="tw-mt-2 tw-text-xs tw-font-light tw-text-neutrals-600 tw-mb-8">
+        Bem vindo ao Anamnotes! Resuma as sessões de anamnese automaticamente.
+      </p>
+      <SignInForm />
+      <p className="tw-text-xs tw-font-light tw-text-neutrals-600 tw-mt-4 tw-text-center">
         Não tem uma conta?{' '}
         <a
-          className="tw-text-brand-500 hover:tw-underline hover:tw-cursor-pointer"
+          className="tw-text-brand-700 tw-font-normal hover:tw-underline hover:tw-cursor-pointer"
           onClick={() => navigate('../sign-up')}
         >
           Crie uma conta
         </a>
         .
       </p>
-      <h1 className="tw-mt-14 tw-text-xl tw-font-semibold tw-text-neutrals-700">{`Bom te ver${
-        firstName ? `, ${firstName}` : ''
-      }! 👋🏻`}</h1>
-      <p className="tw-mt-2 tw-text-sm tw-text-neutrals-600">
-        Resuma as sessões de anamnese automaticamente, de forma rápida e eficiente.
-      </p>
-      <SignInForm />
     </div>
   )
 }

@@ -59,7 +59,7 @@ export const SignInForm: FC = () => {
   const onSubmit = (formData: TSignInFormData) => handleSignIn(formData)
 
   return (
-    <div className="tw-flex tw-flex-col tw-mt-8">
+    <div className="tw-flex tw-flex-col">
       <Alert feedback={feedback} className="tw-mb-4" />
       <FormProvider {...formMethods}>
         <form onSubmit={formMethods.handleSubmit(onSubmit)} className="tw-flex tw-flex-col">
