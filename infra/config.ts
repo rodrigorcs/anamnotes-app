@@ -40,7 +40,7 @@ export const config = {
       }),
       domainName: stageValue<string>({
         staging: 'staging.anamnotes.com',
-        prod: 'anamnotes.com',
+        prod: 'app.anamnotes.com',
       }),
     },
     s3: {
