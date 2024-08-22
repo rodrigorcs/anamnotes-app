@@ -39,7 +39,7 @@ export const config = {
         prod: 'Z0448513YG2VMTOLT2NK',
       }),
       domainName: stageValue<string>({
-        staging: 'staging.anamnotes.com',
+        staging: 'app.staging.anamnotes.com',
         prod: 'app.anamnotes.com',
       }),
     },
