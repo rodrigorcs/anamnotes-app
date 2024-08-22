@@ -184,7 +184,7 @@ export const ConversationModal: FC = () => {
   return (
     <div className="tw-flex-1 tw-justify-center tw-items-center tw-flex tw-overflow-visible tw-absolute tw-bottom-6 tw-inset-0 tw-z-50">
       <div className="tw-absolute tw-w-auto tw-mx-auto tw-max-w-3xl tw-bottom-0 tw-overflow-visible">
-        <div className="tw-w-[38rem] tw-rounded-2xl tw-relative tw-flex tw-flex-col tw-bg-neutrals-white tw-shadow-[0_4px_32px_0px_rgba(0,0,0,0.10)] max-lg:tw-w-[28rem]">
+        <div className="tw-w-[28rem] lg:tw-w-[38rem] tw-rounded-2xl tw-relative tw-flex tw-flex-col tw-bg-neutrals-white tw-shadow-[0_4px_32px_0px_rgba(0,0,0,0.10)]">
           {recordingState === ERecordingState.IDLE ? (
             <StartConversationContent startRecording={startRecording} />
           ) : (
