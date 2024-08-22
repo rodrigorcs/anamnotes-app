@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { EFeedbackTopics, useFeedback } from '../../../hooks/useFeedback'
 import { OngoingConversationContent } from './OngoingConversationContent'
 import { StartConversationContent } from './StartConversationContent'
+import { IWebsocketMessageError } from '../../../models/apis/websocket'
 
 export const ConversationModal: FC = () => {
   const audioStreamRef = useRef<MediaStream | null>(null)
@@ -107,7 +108,7 @@ export const ConversationModal: FC = () => {
       setFeedback(
         {
           type: 'error',
-          message: 'Ocorreu um erro ao enviar a anamnese, verifique a conexão com a internet.',
+          message: 'Ocorreu um erro ao processar a anamnese, verifique a conexão com a internet.',
         },
         { postToTopic: EFeedbackTopics.RECORDING },
       )
@@ -122,10 +123,11 @@ export const ConversationModal: FC = () => {
     await uploadAudioChunk(audioChunk, true)
 
     try {
-      if (!conversationIdRef.current) throw new Error('Invalid conversationId')
+      if (!conversationIdRef.current) throw new Error()
       const conversationWithSummarization = await anamnotesWebsocketAPI.getSummarizationMessage(
         conversationIdRef.current,
       )
+      console.log({ conversationWithSummarization })
       setRecordingState(ERecordingState.SUCCESS)
       addConversation(conversationWithSummarization)
 
@@ -133,21 +135,34 @@ export const ConversationModal: FC = () => {
         navigate(`../${conversationIdRef.current}`)
       }, 1500)
     } catch (error) {
+      const typedError = error as Partial<IWebsocketMessageError>
       setFeedback(
         {
           type: 'error',
-          message: 'Não foi possível gerar um resumo, há pouca informação na anamnese.',
+          message: typedError?.message?.length
+            ? typedError.message
+            : 'Não foi possível gerar um resumo, ocorreu um erro.',
         },
         { postToTopic: EFeedbackTopics.RECORDING },
       )
-      // TODO: Add fallback scenario (e.g. confirm whether the "no info" is the error cause)
       setRecordingState(ERecordingState.ERROR)
     }
   }
 
   const getConversationId = async (clientName: string) => {
-    const conversationId = await anamnotesRestAPI.createConversation({ clientName })
-    conversationIdRef.current = conversationId
+    try {
+      const conversationId = await anamnotesRestAPI.createConversation({ clientName })
+      conversationIdRef.current = conversationId
+    } catch (error) {
+      setFeedback(
+        {
+          type: 'error',
+          message: 'Ocorreu um erro ao iniciar a anamnese, verifique a conexão e tente novamente.',
+        },
+        { postToTopic: EFeedbackTopics.RECORDING },
+      )
+      setRecordingState(ERecordingState.ERROR)
+    }
   }
 
   const startRecording = async (clientName: string) => {
@@ -184,7 +199,7 @@ export const ConversationModal: FC = () => {
   return (
     <div className="tw-flex-1 tw-justify-center tw-items-center tw-flex tw-overflow-visible tw-absolute tw-bottom-6 tw-inset-0 tw-z-50">
       <div className="tw-absolute tw-w-auto tw-mx-auto tw-max-w-3xl tw-bottom-0 tw-overflow-visible">
-        <div className="tw-w-[38rem] tw-rounded-2xl tw-relative tw-flex tw-flex-col tw-bg-neutrals-white tw-shadow-[0_4px_32px_0px_rgba(0,0,0,0.10)] max-lg:tw-w-[28rem]">
+        <div className="tw-w-[22rem] xs:tw-w-[28rem] lg:tw-w-[38rem] tw-rounded-2xl tw-relative tw-flex tw-flex-col tw-bg-neutrals-white tw-shadow-[0_4px_32px_0px_rgba(0,0,0,0.10)]">
           {recordingState === ERecordingState.IDLE ? (
             <StartConversationContent startRecording={startRecording} />
           ) : (
