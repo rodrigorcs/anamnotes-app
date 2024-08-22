@@ -108,7 +108,7 @@ export const ConversationModal: FC = () => {
       setFeedback(
         {
           type: 'error',
-          message: 'Ocorreu um erro ao enviar a anamnese, verifique a conexão com a internet.',
+          message: 'Ocorreu um erro ao processar a anamnese, verifique a conexão com a internet.',
         },
         { postToTopic: EFeedbackTopics.RECORDING },
       )
@@ -150,8 +150,19 @@ export const ConversationModal: FC = () => {
   }
 
   const getConversationId = async (clientName: string) => {
-    const conversationId = await anamnotesRestAPI.createConversation({ clientName })
-    conversationIdRef.current = conversationId
+    try {
+      const conversationId = await anamnotesRestAPI.createConversation({ clientName })
+      conversationIdRef.current = conversationId
+    } catch (error) {
+      setFeedback(
+        {
+          type: 'error',
+          message: 'Ocorreu um erro ao iniciar a anamnese, verifique a conexão e tente novamente.',
+        },
+        { postToTopic: EFeedbackTopics.RECORDING },
+      )
+      setRecordingState(ERecordingState.ERROR)
+    }
   }
 
   const startRecording = async (clientName: string) => {
