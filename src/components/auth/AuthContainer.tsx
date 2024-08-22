@@ -1,8 +1,9 @@
 import { FC, useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
-import signUpImage from '/assets/images/sign-up.png'
 import { useAuthStore } from '../../stores/auth'
 import { cn } from '../../utils/className'
+import signUpImage from '/assets/images/sign-up.png'
+import logoIconNameVec from '/assets/vectors/logo-icon-name.svg'
 
 export const AuthContainer: FC = () => {
   const navigate = useNavigate()
@@ -15,6 +16,9 @@ export const AuthContainer: FC = () => {
 
   return (
     <div className="tw-flex-1 tw-flex tw-p-4 tw-justify-end max-lg:tw-justify-center">
+      <div className="tw-absolute tw-top-8 tw-left-8 xs:tw-left-[4.5rem] sm:tw-left-12">
+        <img src={logoIconNameVec} alt="Anamnotes" className="tw-h-6 xs:tw-h-7" />
+      </div>
       <div
         className={cn(
           'tw-flex-1 tw-pl-24 tw-pr-28 tw-py-16 tw-max-w-[42rem]',
