@@ -39,8 +39,8 @@ export const config = {
         prod: 'Z0448513YG2VMTOLT2NK',
       }),
       domainName: stageValue<string>({
-        staging: 'app.staging.anamnotes.com',
-        prod: 'app.anamnotes.com',
+        staging: 'staging.anamnotes.com',
+        prod: 'anamnotes.com',
       }),
     },
     s3: {
