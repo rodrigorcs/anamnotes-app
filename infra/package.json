@@ -1,5 +1,5 @@
 {
-  "name": "mf-customers-page-infra",
+  "name": "anamnotes-app-infra",
   "version": "0.1.0",
   "bin": {
     "anamnotes-app-stack": "bin/index.js"

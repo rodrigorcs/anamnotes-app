@@ -38,7 +38,9 @@ export const ClientsListItem: FC<IProps> = ({ client, isFirstItem, className }) 
       onClick={handleSelectConversation}
     >
       <Avatar fullName={client.name} />
-      <p className="tw-ml-2 tw-text-neutrals-700 tw-text-sm">{client.name}</p>
+      <p className="tw-ml-2 tw-text-neutrals-700 tw-text-sm tw-text-ellipsis tw-text-nowrap tw-overflow-hidden tw-whitespace-nowrap">
+        {client.name}
+      </p>
     </div>
   )
 }

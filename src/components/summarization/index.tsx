@@ -68,7 +68,7 @@ export const Summarization: FC = () => {
   }, [summarization])
 
   return (
-    <div className="tw-flex tw-flex-col tw-w-[42rem] tw-py-10 tw-px-4">
+    <div className="tw-flex tw-flex-col tw-max-w-[42rem] tw-py-10 tw-px-8">
       <Alert feedback={feedback} className="tw-mb-4" />
       <>
         {!summarization && !feedback ? (
@@ -96,7 +96,7 @@ export const Summarization: FC = () => {
                     )
                   })}
                 </div>
-                <div className="tw-flex tw-mt-8">
+                <div className="tw-flex tw-mt-8 max-xs:tw-flex-col">
                   <Button
                     text="Copiar tudo"
                     IconRight={
