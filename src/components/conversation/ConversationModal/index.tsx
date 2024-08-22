@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { EFeedbackTopics, useFeedback } from '../../../hooks/useFeedback'
 import { OngoingConversationContent } from './OngoingConversationContent'
 import { StartConversationContent } from './StartConversationContent'
+import { IWebsocketMessageError } from '../../../models/apis/websocket'
 
 export const ConversationModal: FC = () => {
   const audioStreamRef = useRef<MediaStream | null>(null)
@@ -122,10 +123,11 @@ export const ConversationModal: FC = () => {
     await uploadAudioChunk(audioChunk, true)
 
     try {
-      if (!conversationIdRef.current) throw new Error('Invalid conversationId')
+      if (!conversationIdRef.current) throw new Error()
       const conversationWithSummarization = await anamnotesWebsocketAPI.getSummarizationMessage(
         conversationIdRef.current,
       )
+      console.log({ conversationWithSummarization })
       setRecordingState(ERecordingState.SUCCESS)
       addConversation(conversationWithSummarization)
 
@@ -133,14 +135,16 @@ export const ConversationModal: FC = () => {
         navigate(`../${conversationIdRef.current}`)
       }, 1500)
     } catch (error) {
+      const typedError = error as Partial<IWebsocketMessageError>
       setFeedback(
         {
           type: 'error',
-          message: 'Não foi possível gerar um resumo, há pouca informação na anamnese.',
+          message: typedError?.message?.length
+            ? typedError.message
+            : 'Não foi possível gerar um resumo, ocorreu um erro.',
         },
         { postToTopic: EFeedbackTopics.RECORDING },
       )
-      // TODO: Add fallback scenario (e.g. confirm whether the "no info" is the error cause)
       setRecordingState(ERecordingState.ERROR)
     }
   }

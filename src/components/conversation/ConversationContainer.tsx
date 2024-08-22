@@ -57,17 +57,7 @@ export const ConversationContainer: FC = () => {
         )
         setSelectedConversation(conversationWithSummarizations)
 
-        if (!conversationWithSummarizations.summarizations?.length) {
-          setFeedback(
-            {
-              type: 'warning',
-              title: 'Não há dados suficientes.',
-              message:
-                'Não foi gerado o resumo desta anamnese devido à pouca informação disponível durante a sessão com o paciente.',
-            },
-            { postToTopic: EFeedbackTopics.CONVERSATION },
-          )
-        }
+        if (!conversationWithSummarizations.summarizations?.length) throw new Error()
       } catch (error) {
         setFeedback(
           {

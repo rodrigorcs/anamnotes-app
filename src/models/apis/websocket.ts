@@ -4,8 +4,8 @@ export enum EWebsocketMessageTypes {
   SUMMARIZATION = 'summarization',
 }
 
-interface IWebsocketMessageError {
-  message: string | null
+export interface IWebsocketMessageError {
+  message?: string | null
 }
 
 export interface IWebsocketMessage<DataType> {
