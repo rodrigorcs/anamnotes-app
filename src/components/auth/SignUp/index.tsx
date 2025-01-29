@@ -12,7 +12,7 @@ export const SignUpContent: FC = () => {
         Bem vindo ao Anamnotes - Vamos criar a sua conta.
       </p>
       <SignUpForm />
-      <p className="tw-text-xs tw-font-light tw-text-neutrals-600 tw-mt-4 tw-text-center">
+      <p className="tw-text-xs tw-font-light tw-text-neutrals-600 tw-mt-8 tw-text-center">
         Já tem uma conta?{' '}
         <a
           className="tw-text-brand-700 tw-font-normal hover:tw-underline hover:tw-cursor-pointer"

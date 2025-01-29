@@ -13,6 +13,7 @@ import {
 } from '../../../models/forms/SignUpForm'
 import { Alert } from '../../common/Alert'
 import { useFeedback } from '../../../hooks/useFeedback'
+import googleLogoVector from '/assets/vectors/logo-google.svg'
 
 export const SignUpForm: FC = () => {
   const navigate = useNavigate()
@@ -97,11 +98,14 @@ export const SignUpForm: FC = () => {
         </form>
       </FormProvider>
       <Button
+        IconLeft={
+          <img src={googleLogoVector} alt="Google Logo" className="tw-h-5 tw-aspect-square" />
+        }
         text="Entrar com Google"
-        onClick={() => {
-          signInWithRedirect({ provider: 'Google' })
-        }}
-        className="tw-mt-12"
+        className="tw-mt-3 tw-bg-background-white tw-border tw-border-neutrals-200 hover:tw-border-neutrals-400"
+        textClassName="tw-text-neutrals-600 group-hover:tw-text-neutrals-900"
+        variant="secondary"
+        onClick={() => signInWithRedirect({ provider: 'Google' })}
       />
     </div>
   )

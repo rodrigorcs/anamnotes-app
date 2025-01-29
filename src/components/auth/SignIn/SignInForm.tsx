@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import { Input } from '../../common/Input'
-import { AuthError, fetchAuthSession, signIn } from 'aws-amplify/auth'
+import { AuthError, fetchAuthSession, signIn, signInWithRedirect } from 'aws-amplify/auth'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Button } from '../../common/Button'
 import { useAuthStore } from '../../../stores/auth'
@@ -13,6 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { Alert } from '../../common/Alert'
 import { useFeedback } from '../../../hooks/useFeedback'
+import googleLogoVector from '/assets/vectors/logo-google.svg'
 
 export const SignInForm: FC = () => {
   const navigate = useNavigate()
@@ -89,7 +90,22 @@ export const SignInForm: FC = () => {
               navigate('../forgot-password')
             }}
           />
-          <Button text="Entrar" type="submit" isLoading={isSigningIn} className="tw-mt-12" />
+          <Button
+            text="Entrar"
+            type="submit"
+            isLoading={isSigningIn}
+            className="tw-mt-12 tw-shadow-none"
+          />
+          <Button
+            IconLeft={
+              <img src={googleLogoVector} alt="Google Logo" className="tw-h-5 tw-aspect-square" />
+            }
+            text="Entrar com Google"
+            className="tw-mt-3 tw-bg-background-white tw-border tw-border-neutrals-200 hover:tw-border-neutrals-400"
+            textClassName="tw-text-neutrals-600 group-hover:tw-text-neutrals-900"
+            variant="secondary"
+            onClick={() => signInWithRedirect({ provider: 'Google' })}
+          />
         </form>
       </FormProvider>
     </div>
