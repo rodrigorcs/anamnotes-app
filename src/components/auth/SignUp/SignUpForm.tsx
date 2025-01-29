@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import { Input } from '../../common/Input'
-import { AuthError, signUp } from 'aws-amplify/auth'
+import { AuthError, signInWithRedirect, signUp } from 'aws-amplify/auth'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Button } from '../../common/Button'
 import { useAuthStore } from '../../../stores/auth'
@@ -96,6 +96,13 @@ export const SignUpForm: FC = () => {
           <Button text="Inscreva-se" type="submit" isLoading={isSigningUp} className="tw-mt-12" />
         </form>
       </FormProvider>
+      <Button
+        text="Entrar com Google"
+        onClick={() => {
+          signInWithRedirect({ provider: 'Google' })
+        }}
+        className="tw-mt-12"
+      />
     </div>
   )
 }
