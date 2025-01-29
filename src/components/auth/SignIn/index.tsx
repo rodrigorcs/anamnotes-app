@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { SignInForm } from './SignInForm'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../../stores/auth'
@@ -19,7 +19,7 @@ export const SignInContent: FC = () => {
         Bem vindo ao Anamnotes! Resuma as sessões de anamnese automaticamente.
       </p>
       <SignInForm />
-      <p className="tw-text-xs tw-font-light tw-text-neutrals-600 tw-mt-4 tw-text-center">
+      <p className="tw-text-xs tw-font-light tw-text-neutrals-600 tw-mt-8 tw-text-center">
         Não tem uma conta?{' '}
         <a
           className="tw-text-brand-700 tw-font-normal hover:tw-underline hover:tw-cursor-pointer"

@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import { Input } from '../../common/Input'
-import { AuthError, signUp } from 'aws-amplify/auth'
+import { AuthError, signInWithRedirect, signUp } from 'aws-amplify/auth'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Button } from '../../common/Button'
 import { useAuthStore } from '../../../stores/auth'
@@ -13,6 +13,7 @@ import {
 } from '../../../models/forms/SignUpForm'
 import { Alert } from '../../common/Alert'
 import { useFeedback } from '../../../hooks/useFeedback'
+import googleLogoVector from '/assets/vectors/logo-google.svg'
 
 export const SignUpForm: FC = () => {
   const navigate = useNavigate()
@@ -96,6 +97,16 @@ export const SignUpForm: FC = () => {
           <Button text="Inscreva-se" type="submit" isLoading={isSigningUp} className="tw-mt-12" />
         </form>
       </FormProvider>
+      <Button
+        IconLeft={
+          <img src={googleLogoVector} alt="Google Logo" className="tw-h-5 tw-aspect-square" />
+        }
+        text="Entrar com Google"
+        className="tw-mt-3 tw-bg-background-white tw-border tw-border-neutrals-200 hover:tw-border-neutrals-400"
+        textClassName="tw-text-neutrals-600 group-hover:tw-text-neutrals-900"
+        variant="secondary"
+        onClick={() => signInWithRedirect({ provider: 'Google' })}
+      />
     </div>
   )
 }

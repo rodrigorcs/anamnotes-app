@@ -63,6 +63,7 @@ interface IProps {
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type']
   iconSize?: number
   iconStrokeWidth?: number
+  children?: ReactNode
 }
 
 export const Button: FC<IProps> = ({
@@ -81,6 +82,7 @@ export const Button: FC<IProps> = ({
   type = 'button',
   iconSize = 1.5,
   iconStrokeWidth = 2,
+  children,
 }) => {
   const variantStyles = getStylesByVariant(variant)
 
@@ -107,6 +109,7 @@ export const Button: FC<IProps> = ({
         }}
       >
         {IconLeft && IconLeft}
+        {children && children}
         {text && (
           <p
             className={cn(
